@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/paicoding-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-ui/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-ui/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paicoding-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources-env/dev" charset="UTF-8" />
+  </component>
+</project>
