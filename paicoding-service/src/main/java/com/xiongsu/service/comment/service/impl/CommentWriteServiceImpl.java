@@ -9,6 +9,8 @@ import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.notify.NotifyMsgEvent;
 import com.xiongsu.core.util.NumUtil;
 import com.xiongsu.core.util.SpringUtil;
+import com.xiongsu.service.article.repository.entity.ArticleDO;
+import com.xiongsu.service.article.service.ArticleReadService;
 import com.xiongsu.service.comment.converter.CommentConverter;
 import com.xiongsu.service.comment.repository.dao.CommentDao;
 import com.xiongsu.service.comment.repository.entity.CommentDO;
@@ -25,6 +27,12 @@ public class CommentWriteServiceImpl implements CommentWriteService {
 
     @Autowired
     private CommentDao commentDao;
+
+    @Autowired
+    private ArticleReadService articleReadService;
+
+    @Autowired
+    private UserFootService userFootWriteService;
 
 
     @Override
