@@ -1,6 +1,8 @@
 package com.xiongsu.service.article.service.impl;
 
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.xiongsu.api.enums.*;
 import com.xiongsu.api.exception.ExceptionUtil;
@@ -13,16 +15,22 @@ import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
 import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.core.cache.RedisClient;
 import com.xiongsu.core.util.ArticleUtil;
 import com.xiongsu.core.util.SpringUtil;
+import com.xiongsu.service.article.constant.RedisConstant;
 import com.xiongsu.service.article.conveter.ArticleConverter;
 import com.xiongsu.service.article.repository.dao.ArticleDao;
 import com.xiongsu.service.article.repository.dao.ArticleTagDao;
 import com.xiongsu.service.article.repository.entity.ArticleDO;
 import com.xiongsu.service.article.service.ArticleReadService;
 import com.xiongsu.service.article.service.CategoryService;
+import com.xiongsu.service.utils.RedisLuaUtil;
+import com.xiongsu.service.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -32,6 +40,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,11 +49,15 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ArticleReadServiceImpl implements ArticleReadService {
+
+    @Autowired(required = false)
+    private RedissonClient redissonClient;
 
     @Autowired
     private ArticleDao articleDao;
@@ -53,6 +67,9 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private RedisLuaUtil redisLuaUtil;
 
     /**
      * 在一个项目中，UserFootService 就是内部服务调用
@@ -70,6 +87,12 @@ public class ArticleReadServiceImpl implements ArticleReadService {
     @Value("${elasticsearch.open:false}")
     private Boolean openES;
 
+    @Value("${spring.redis.isOpen}")
+    private Boolean openRedis;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
     public ArticleDO queryBasicArticle(Long articleId) {
         return articleDao.getById(articleId);
@@ -77,7 +100,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public String generateSummary(String content) {
-        return ArticleUtil.pinkSummary(content);
+        return ArticleUtil.pickSummary(content);
     }
 
     @Override
@@ -91,6 +114,8 @@ public class ArticleReadServiceImpl implements ArticleReadService {
      * @param articleId
      * @return
      */
+    /*
+    //不引入redis缓存，直接访问数据库
     @Override
     public ArticleDTO queryDetailArticleInfo(Long articleId) {
         ArticleDTO article = articleDao.queryArticleDetail(articleId);
@@ -104,7 +129,192 @@ public class ArticleReadServiceImpl implements ArticleReadService {
         //更新标签信息
         article.setTags(articleTagDao.queryArticleTagDetails(articleId));
         return article;
+    }*/
+    @Override
+    public ArticleDTO queryDetailArticleInfo(Long articleId) {
+        //引入redis缓存
+        ArticleDTO article = null;//设置为null原因是确保后续执行代码可以进行空值判断
+        if(openRedis) {
+            String redisCacheKey = RedisConstant.REDIS_PRE_ARTICLE + RedisConstant.REDIS_CACHE + articleId;
+            String articleStr = RedisClient.getStr(redisCacheKey); // 文章数据
+            if(!ObjectUtils.isEmpty(articleStr)) {
+                article = JSONUtil.toBean(articleStr, ArticleDTO.class);
+            }else{
+                // 存在缓存击穿问题，引入分布式锁
+                 /*
+                第一种方式：
+                缺点：不加finally去del锁，那么会出现该线程执行完之后在不过期时间内一直持有该锁不释放，
+                在这过程内导致其他线程无法再次获取锁
+                */
+                    // article = this.checkArticleByDBOne(articleId);
+
+                /*
+                第二种方式：
+                    优点：与第一种方式相比增加了finally，在线程执行完之后会立即释放锁
+                即使在执行finally之前宕机了，那么因为有了过期时间，还是会自动释放
+                    缺点：可能会释放别人的锁。
+                */
+                    // article = this.checkArticleByDBTwo(articleId);
+
+                /*
+                第三种方式：
+                    优点：与第二种方式相比解决了其删除别人分布式锁的问题。在加锁时set(key, value);
+                解锁时会对比是否和他加锁时的value是否相等，相等则是他自己的锁，否则是别人锁不能解锁。
+                    在解锁时采用了lua脚本保证其原子性
+                    缺点：这种方式会出现加锁过期时间不能够根据业务和运行环境设置合适过期时间；
+                设置时间过短，则会业务还未执行完毕则锁自动释放，那么其他线程依旧可以拿到锁，无法很好解决缓存击穿问题
+                设置时间过长：如果在执行finally释放锁之前系统宕机了，那么还需要等着到时间后才能自动解锁
+                */
+                    // article = this.checkArticleByDBThree(articleId);
+
+                /*
+                第四种方式：
+                    优点：解决了第三种方式无法设置合适过期时间
+                */
+                article = this.checkArticleByDBFour(articleId);
+            }
+            if(article != null) {
+                RedisClient.setStr(redisCacheKey,JSONUtil.toJsonStr(article));
+            }
+        }
+        //更新分类相关信息
+        CategoryDTO categoryDTO = article.getCategory();
+        categoryDTO.setCategory(categoryService.queryCategoryName(categoryDTO.getCategoryId()));
+
+        //更新标签信息
+        article.setTags(articleTagDao.queryArticleTagDetails(articleId));
+        return article;
     }
+
+    /**
+     * Redis分布式锁第四种方法
+     * @param articleId
+     * @return ArticleDTO
+     */
+    private ArticleDTO checkArticleByDBFour(Long articleId) {
+        ArticleDTO article = null;
+        String redisLockKey =
+                RedisConstant.REDIS_PAI + RedisConstant.REDIS_PRE_ARTICLE + RedisConstant.REDIS_LOCK + articleId;
+        //获取分布式锁
+        RLock lock = redissonClient.getLock(redisLockKey);
+        try {
+            //尝试加锁,最大等待时间3秒，上锁30秒自动解锁
+            if (lock.tryLock(3, 30, TimeUnit.SECONDS)) {
+                //3秒是最大等待时间：如果锁被其他线程持有，当前线程会等待最多3秒来获取锁
+                //30秒是锁持有时间：当前线程获取锁后，锁将在30秒后自动释放，防止死锁
+                article = articleDao.queryArticleDetail(articleId);
+            } else {
+                // 未获得分布式锁线程睡眠一下；然后再去获取数据
+                Thread.sleep(200);
+                this.queryDetailArticleInfo(articleId);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            //判断该lock是否已经锁 并且 锁是否是自己的
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+        return article;
+    }
+
+
+    /**
+     * Redis分布式锁第三种方法
+     * @param articleId
+     * @return ArticleDTO
+     */
+    private ArticleDTO checkArticleByDBThree(Long articleId) {
+        String redisLockKey =
+                RedisConstant.REDIS_PAI + RedisConstant.REDIS_PRE_ARTICLE + RedisConstant.REDIS_LOCK + articleId;
+
+        //设置value值，保证不误删除他人锁
+        String value = RandomUtil.randomString(6);
+        Boolean isLockSuccess = redisUtil.setIfAbsent(redisLockKey, value, 90L);
+        ArticleDTO article = null;
+        try {
+            if(isLockSuccess) {
+                article = articleDao.queryArticleDetail(articleId);
+            }else{
+                Thread.sleep(200);
+                this.queryDetailArticleInfo(articleId);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            //这种先get出value,然后再比较删除;这种无法保证原子性，为了保证原子性，采用了lua脚本
+           /*
+            String redisLockValue = RedisClient.getStr(redisLockKey);
+            if(!ObjectUtils.isEmpty(redisLockValue) && StringUtils.equals(value,redisLockValue)) {
+                RedisClient.del(redisLockKey);
+            }*/
+            //采用lua脚本来进行判断，在删除；和上面的这种方式相比保证了原子性
+            Long cad =  redisLuaUtil.cad("pai_" + redisLockKey, value);
+            log.info("lua 脚本删除结果" + cad);
+        }
+        return article;
+    }
+
+    /**
+     * Redis分布式锁第二种方法
+     * @param articleId
+     * @return ArticleDTO
+     */
+    private ArticleDTO checkArticleByDBTwo(Long articleId) {
+
+        String redisLockKey =
+                RedisConstant.REDIS_PAI + RedisConstant.REDIS_PRE_ARTICLE + RedisConstant.REDIS_LOCK + articleId;
+
+        ArticleDTO article = null;
+
+        Boolean isLockSuccess = redisUtil.setIfAbsent(redisLockKey, null, 90L);
+        try {
+            if (isLockSuccess) {
+                article = articleDao.queryArticleDetail(articleId);
+            } else {
+                Thread.sleep(200);
+                this.queryDetailArticleInfo(articleId);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            //和第一种方式相比增加了finally删除key
+            RedisClient.del(redisLockKey);
+        }
+        return article;
+    }
+
+    /**
+     * Redis分布式锁第一种方法
+     *
+     * @param  articleId
+     * @return ArticleDTO
+     */
+    private ArticleDTO checkArticleByDBone(Long articleId) {
+        String redisLockKey =
+                RedisConstant.REDIS_PAI + RedisConstant.REDIS_PRE_ARTICLE + RedisConstant.REDIS_LOCK + articleId;
+        ArticleDTO article = null;
+        //加分布式锁：此时value为null,时间为90s(结合自己场景设置合适过期时间，这里随便设置的时间)
+        Boolean isLockSuccess = redisUtil.setIfAbsent(redisLockKey, null, 90L);
+
+        if(isLockSuccess) {
+            //加锁成功可以访问数据库
+            article = articleDao.queryArticleDetail(articleId);
+        } else{
+            try {
+                //短暂睡眠，为了让拿到锁的线程有时间访问数据库拿到数据后set进缓存，
+                //这样在自旋时就能从缓存中拿到数据
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //加锁失败，采用自旋方式重新拿取数据
+            this.queryDetailArticleInfo(articleId);
+        }
+        return article;
+    }
+
 
     /**
      * 查询文章所有的关联信息，正文，分类，标签，阅读计数，当前登录用户是否点赞，评论过

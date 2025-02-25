@@ -281,7 +281,7 @@ public class ColumnSettingServiceImpl implements ColumnSettingService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void sortColumnArticleByIDApi(SortColumnArticleByIDReq req) {
-// 获取要重新排序的专栏文章
+        // 获取要重新排序的专栏文章
         ColumnArticleDO columnArticleDO = columnArticleDao.getById(req.getId());
         // 不等于空
         if (columnArticleDO == null) {

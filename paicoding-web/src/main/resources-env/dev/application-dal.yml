@@ -30,6 +30,7 @@ spring:
         username: root
         password:
   redis:
+    isOpen: false
     host: 192.168.59.128
     port: 6379
     password: 123456
