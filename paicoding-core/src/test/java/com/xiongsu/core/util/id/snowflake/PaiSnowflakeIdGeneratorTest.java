@@ -5,19 +5,14 @@ import com.xiongsu.core.util.DateUtil;
 import com.xiongsu.core.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.TreeSet;
 
-/**
- * 自定义实现的雪花算法生成器
- * <p>
- * 时间 + 数据中心(3位) + 机器id(7位) + 序列号(10位)
- *
- * @author YiHui
- * @date 2023/10/16
- */
 @Slf4j
-public class PaiSnowflakeIdGenerator implements IdGenerator {
+public class PaiSnowflakeIdGeneratorTest {
     /**
      * 自增序号位数
      */
@@ -56,7 +51,7 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
 
     private byte sequenceOffset;
 
-    public PaiSnowflakeIdGenerator() {
+    public PaiSnowflakeIdGeneratorTest() {
         try {
             String ip = IpUtil.getLocalIp4Address();//获取本地IPv4地址
             String[] cells = StringUtils.split(ip, ".");
@@ -68,7 +63,7 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
         }
     }
 
-    public PaiSnowflakeIdGenerator(int workId, int dateCenter) {
+    public PaiSnowflakeIdGeneratorTest(int workId, int dateCenter) {
         this.workId = workId;
         this.dataCenter = dateCenter;
     }
@@ -78,7 +73,7 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
      *
      * @return
      */
-    @Override
+
     public synchronized Long nextId() {//用于生成 ID。它是 synchronized 的，保证了多线程环境下的线程安全。
         long nowTime = waitToIncrDiffIfNeed(getNowTime()); //getNowTime() 获取当前的时间戳（秒级）。
         //waitToIncrDiffIfNeed(nowTime) 检查当前时间与上次生成 ID 时的时间是否相同，如果时间相同，则尝试等待，确保不会出现时钟回拨或时间差异带来的问题。
@@ -87,8 +82,8 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
                 // 表示当前这一时刻的自增数被用完了；等待下一时间点
                 nowTime = waitUntilNextTime(nowTime);
             }//如果当前时间和上次生成 ID 的时间相同，则尝试自增 sequence（序列号）。
-             //sequence = (sequence + 1) & SEQUENCE_MASK：序列号加 1，并使用位掩码 SEQUENCE_MASK 保证序列号不会超过最大值。
-             //如果序列号达到最大值（0），则等待到下一秒（或下一毫秒）再生成 ID，防止同一毫秒内生成重复 ID。
+            //sequence = (sequence + 1) & SEQUENCE_MASK：序列号加 1，并使用位掩码 SEQUENCE_MASK 保证序列号不会超过最大值。
+            //如果序列号达到最大值（0），则等待到下一秒（或下一毫秒）再生成 ID，防止同一毫秒内生成重复 ID。
         } else {
             // 上一毫秒若以0作为序列号开始值，则这一秒以1为序列号开始值
             vibrateSequenceOffset();
@@ -104,6 +99,7 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
             log.debug("seconds:{}, datacenter:{}, work:{}, seq:{}, ans={}", nowTime % DateUtil.ONE_DAY_SECONDS, dataCenter, workId, sequence, ans);
         }
         return Long.parseLong(String.format("%s%011d", getDaySegment(nowTime), ans));
+        //return ans;
         //getDaySegment(nowTime)：根据当前时间戳获取当天的分区信息（基于年月日）。
         //String.format("%s%011d", ...)：将日期分区和生成的 ID 拼接成一个最终的 64 位 ID。
     }
@@ -168,5 +164,24 @@ public class PaiSnowflakeIdGenerator implements IdGenerator {
     private static String getDaySegment(long time) {
         LocalDateTime localDate = DateUtil.time2LocalTime(time * 1000L);
         return String.format("%02d%03d", localDate.getYear() % 100, localDate.getDayOfYear());
+    }
+
+    public static void main(String[] args) {
+        PaiSnowflakeIdGeneratorTest snowflakeIdGenerator = new PaiSnowflakeIdGeneratorTest(1, 2);
+
+        // 生成50个id
+        Set<Long> set = new TreeSet<>();
+        for (int i = 0; i < 50; i++) {
+            set.add(snowflakeIdGenerator.nextId());
+        }
+        System.out.println(set.size());
+        System.out.println(set);
+
+        // 验证生成100万个id需要多久
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            snowflakeIdGenerator.nextId();
+        }
+        System.out.println(System.currentTimeMillis() - startTime);
     }
 }

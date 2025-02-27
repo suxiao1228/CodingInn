@@ -13,6 +13,10 @@ import java.util.concurrent.*;
  */
 @Slf4j
 public class SnowflakeProducer {
+    //队列缓冲机制：通过限制队列的大小（最多 10 个 ID）来避免过多的 ID 被同时生成，减少系统的压力。在高并发的情况下，队列能有效缓解生产与消费速度不一致的问题。
+    //单线程生成：通过 ExecutorService 只使用一个线程负责生成 ID，确保 ID 生成是串行的，避免多个线程竞争导致的 ID 冲突或线程安全问题。
+    //跨天处理：使用跨天检测机制，确保 ID 在跨天时不会重复生成，保持唯一性。
+    //超时控制：在队列满时，使用 offer() 方法并设置超时，这样可以避免长时间阻塞。
     private BlockingQueue<Long> queue;
 
     /**
@@ -20,6 +24,10 @@ public class SnowflakeProducer {
      */
     public static final Long ID_EXPIRE_TIME_INTER = DateUtil.ONE_DAY_MILL;//定义ID失效的间隔时间
     private static final int QUEUE_SIZE = 10;//设置队列的最大容量。这个队列最多可以存放10个ID，用来缓冲生成的ID。队列大小限制了生成ID的并发数量，避免在高负载情况下阻塞太多操作
+
+    //使用 ExecutorService 来创建一个单线程的 线程池。Executors.newSingleThreadExecutor() 创建了一个单线程池，确保只有一个线程在后台循环生成 ID。
+    //设置了线程名为 "SnowflakeProducer-generate-thread"，并且设置为 守护线程（setDaemon(true)），这意味着当主程序退出时，生成 ID 的线程会自动结束
+    //这样做的目的是 避免并发问题，只有一个线程在后台生成 ID，避免多个线程同时生成 ID，造成 ID 冲突或者线程不安全的情况。
     private ExecutorService es = Executors.newSingleThreadExecutor((Runnable r) -> {//创建一个单线程的 ExecutorService。这里用来管理生成ID的线程，确保只有一个线程在后台循环生成ID，避免多个线程并发生成ID导致的线程安全问题。
         // 线程名设置为 "SnowflakeProducer-generate-thread"，并且设置为守护线程，确保当主程序退出时这个线程会自动结束。
         Thread t = new Thread(r);
@@ -28,6 +36,10 @@ public class SnowflakeProducer {
         return t;
     });
 
+
+    //使用 queue.offer(generator.nextId(), 1, TimeUnit.MINUTES) 来将生成的 ID 放入队列。offer() 方法用于将元素放入队列，设置了 1 分钟的超时，防止队列满时长时间阻塞。
+    //每次生成 ID 后，会检查是否跨天。ID_EXPIRE_TIME_INTER 代表的是 一天的时间，如果当前时间与上次生成 ID 的时间超过一天，表示已经跨天了。
+    //如果是跨天，则通过 queue.clear() 清空队列，重新生成新的 ID，防止 ID 过期或重复。
     public SnowflakeProducer(final IdGenerator generator) {//接受一个 IdGenerator 对象，表示生成ID的核心逻辑。
         queue = new LinkedBlockingQueue<>(QUEUE_SIZE);
         es.submit(() -> {
