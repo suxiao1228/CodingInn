@@ -5,8 +5,8 @@ import lombok.Getter;
 /**
  * 用户页面选择枚举
  *
- * @author louzai
- * @since 2022/7/19
+ * @author XuYifei
+ * @since 2024-07-12
  */
 @Getter
 public enum HomeSelectEnum {

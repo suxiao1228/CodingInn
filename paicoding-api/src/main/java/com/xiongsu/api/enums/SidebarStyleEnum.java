@@ -3,8 +3,8 @@ package com.xiongsu.api.enums;
 import lombok.Getter;
 
 /**
- * @author YiHui
- * @date 2022/9/6
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 public enum SidebarStyleEnum {

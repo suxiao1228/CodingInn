@@ -5,8 +5,8 @@ import lombok.Getter;
 /**
  * 官方状态枚举
  *
- * @author louzai
- * @since 2022/7/19
+ * @author XuYifei
+ * @since 2024-07-12
  */
 @Getter
 public enum OfficalStatEnum {

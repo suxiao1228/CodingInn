@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author YiHui
- * @date 2022/9/3
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 public enum NotifyTypeEnum {
@@ -27,15 +27,9 @@ public enum NotifyTypeEnum {
     REGISTER(6, "用户注册"),
     BIND(6, "绑定星球"),
     LOGIN(6, "用户登录"),
-
-    PAYING(6, "支付中通知"),
-    PAY(6, "支付结果通知"),
     ;
 
 
-    /**
-     * 表示消息类型： 1-6 对应的时评论/回复/点赞/关注消息/系统消息等
-     */
     private int type;
     private String msg;
 

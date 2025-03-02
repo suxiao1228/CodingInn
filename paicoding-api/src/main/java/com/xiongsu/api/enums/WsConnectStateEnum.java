@@ -3,8 +3,8 @@ package com.xiongsu.api.enums;
 /**
  * websocket 连接 状态
  *
- * @author YiHui
- * @date 2023/6/12
+ * @author XuYifei
+ * @date 2024-07-12
  */
 public enum WsConnectStateEnum {
     // 初始化

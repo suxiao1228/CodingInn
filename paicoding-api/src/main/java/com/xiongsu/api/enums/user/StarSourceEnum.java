@@ -6,8 +6,8 @@ import lombok.Getter;
 /**
  * 星球来源枚举
  *
- * @author YiHui
- * @date 2023/6/26
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 @AllArgsConstructor

@@ -19,8 +19,8 @@ import lombok.Getter;
  * <p>
  * code: 具体的业务code
  *
- * @author YiHui
- * @date 2022/7/27
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 public enum StatusEnum {
@@ -56,6 +56,8 @@ public enum StatusEnum {
     // 教程文章已存在
     COLUMN_ARTICLE_EXISTS(200_500_004, "专栏教程已存在:%s"),
     ARTICLE_RELATION_TUTORIAL(200_500_006, "文章已被添加为教程:%s"),
+    // 分类不存在
+    CATEGORY_NOT_EXISTS(200_404_101, "分类不存在:%s"),
 
     // --------------------------------
 
@@ -77,7 +79,9 @@ public enum StatusEnum {
     USER_STAR_NOT_EXISTS(400_404_002, "星球编号不存在:%s"),
     // 星球编号重复
     USER_STAR_REPEAT(400_404_002, "星球编号重复:%s"),
-    USER_PWD_ERROR(400_500_002, "用户名or密码错误");
+    USER_PWD_ERROR(400_500_002, "用户名or密码错误"),
+    // 权限不足
+    NO_PERMISSION(400_403_002, "权限不足");
 
     private int code;
 
