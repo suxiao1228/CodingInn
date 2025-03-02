@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.article.cache;
 
-import com.github.paicoding.forum.api.model.vo.article.dto.ArticleDTO;
+import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import lombok.Data;
 
 /**

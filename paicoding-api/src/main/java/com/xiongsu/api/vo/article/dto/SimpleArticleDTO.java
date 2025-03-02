@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.github.paicoding.forum.api.model.enums.column.ColumnArticleReadEnum;
+import com.xiongsu.api.enums.column.ColumnArticleReadEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;

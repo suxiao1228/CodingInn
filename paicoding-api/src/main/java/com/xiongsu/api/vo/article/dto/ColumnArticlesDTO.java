@@ -1,7 +1,7 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.github.paicoding.forum.api.model.enums.column.ColumnTypeEnum;
-import com.github.paicoding.forum.api.model.vo.comment.dto.TopCommentDTO;
+import com.xiongsu.api.enums.column.ColumnTypeEnum;
+import com.xiongsu.api.vo.comment.dto.TopCommentDTO;
 import lombok.Data;
 
 import java.util.List;

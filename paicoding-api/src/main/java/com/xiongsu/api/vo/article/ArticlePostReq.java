@@ -1,8 +1,8 @@
 package com.xiongsu.api.vo.article;
 
-import com.github.paicoding.forum.api.model.enums.ArticleTypeEnum;
-import com.github.paicoding.forum.api.model.enums.PushStatusEnum;
-import com.github.paicoding.forum.api.model.enums.SourceTypeEnum;
+import com.xiongsu.api.enums.ArticleTypeEnum;
+import com.xiongsu.api.enums.PushStatusEnum;
+import com.xiongsu.api.enums.SourceTypeEnum;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.chat;
 
-import com.github.paicoding.forum.api.model.enums.ai.AISourceEnum;
+import com.xiongsu.api.enums.ai.AISourceEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

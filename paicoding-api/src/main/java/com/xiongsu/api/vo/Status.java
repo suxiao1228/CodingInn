@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo;
 
-import com.github.paicoding.forum.api.model.vo.constants.StatusEnum;
+import com.xiongsu.api.vo.constants.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

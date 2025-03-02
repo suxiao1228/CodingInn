@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo;
 
-import com.github.paicoding.forum.api.model.vo.constants.StatusEnum;
+import com.xiongsu.api.vo.constants.StatusEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -35,7 +35,7 @@ public class ResVo<T> implements Serializable {
 
     @SuppressWarnings("unchecked")
     public static <T> ResVo<T> fail(StatusEnum status, Object... args) {
-        return new ResVo<>(com.github.paicoding.forum.api.model.vo.Status.newStatus(status, args));
+        return new ResVo<>(com.xiongsu.api.vo.Status.newStatus(status, args));
     }
 
     public static <T> ResVo<T> fail(Status status) {

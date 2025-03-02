@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.github.paicoding.forum.api.model.enums.PushStatusEnum;
+import com.xiongsu.api.enums.PushStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;

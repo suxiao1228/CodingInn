@@ -1,7 +1,7 @@
 package com.xiongsu.api.vo.banner.dto;
 
-import com.github.paicoding.forum.api.model.entity.BaseDTO;
-import com.github.paicoding.forum.api.model.enums.ConfigTagEnum;
+import com.xiongsu.api.entity.BaseDTO;
+import com.xiongsu.api.enums.ConfigTagEnum;
 import lombok.Data;
 
 /**

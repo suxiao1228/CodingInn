@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.recommend;
 
-import com.github.paicoding.forum.api.model.enums.SidebarStyleEnum;
+import com.xiongsu.api.enums.SidebarStyleEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

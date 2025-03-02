@@ -1,8 +1,8 @@
 package com.xiongsu.api.vo.article.response;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.paicoding.forum.api.model.vo.article.dto.ArticleDTO;
-import com.github.paicoding.forum.api.model.vo.article.dto.CategoryDTO;
+import com.xiongsu.api.vo.article.dto.ArticleDTO;
+import com.xiongsu.api.vo.article.dto.CategoryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 

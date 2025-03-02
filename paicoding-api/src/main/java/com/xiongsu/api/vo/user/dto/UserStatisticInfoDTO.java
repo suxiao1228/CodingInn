@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.user.dto;
 
-import com.github.paicoding.forum.api.model.vo.article.dto.YearArticleDTO;
+import com.xiongsu.api.vo.article.dto.YearArticleDTO;
 import lombok.Data;
 import lombok.ToString;
 

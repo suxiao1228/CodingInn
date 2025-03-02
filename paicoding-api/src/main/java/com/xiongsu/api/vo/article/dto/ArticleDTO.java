@@ -1,8 +1,8 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.github.paicoding.forum.api.model.enums.SourceTypeEnum;
-import com.github.paicoding.forum.api.model.vo.user.dto.ArticleFootCountDTO;
-import com.github.paicoding.forum.api.model.vo.user.dto.SimpleUserInfoDTO;
+import com.xiongsu.api.enums.SourceTypeEnum;
+import com.xiongsu.api.vo.user.dto.ArticleFootCountDTO;
+import com.xiongsu.api.vo.user.dto.SimpleUserInfoDTO;
 import lombok.Data;
 
 import java.io.Serializable;

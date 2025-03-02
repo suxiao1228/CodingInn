@@ -1,7 +1,7 @@
 package com.xiongsu.api.vo.user.dto;
 
-import com.github.paicoding.forum.api.model.entity.BaseDTO;
-import com.github.paicoding.forum.api.model.enums.user.UserAIStatEnum;
+import com.xiongsu.api.entity.BaseDTO;
+import com.xiongsu.api.enums.user.UserAIStatEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;

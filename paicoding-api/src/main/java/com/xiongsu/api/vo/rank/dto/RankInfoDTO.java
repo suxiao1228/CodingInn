@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.rank.dto;
 
-import com.github.paicoding.forum.api.model.enums.rank.ActivityRankTimeEnum;
+import com.xiongsu.api.enums.rank.ActivityRankTimeEnum;
 import lombok.Data;
 
 import java.util.List;

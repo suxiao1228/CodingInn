@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.notify;
 
-import com.github.paicoding.forum.api.model.enums.NotifyTypeEnum;
+import com.xiongsu.api.enums.NotifyTypeEnum;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

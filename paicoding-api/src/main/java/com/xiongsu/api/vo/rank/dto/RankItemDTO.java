@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.rank.dto;
 
-import com.github.paicoding.forum.api.model.vo.user.dto.SimpleUserInfoDTO;
+import com.xiongsu.api.vo.user.dto.SimpleUserInfoDTO;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

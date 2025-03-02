@@ -1,6 +1,6 @@
 package com.xiongsu.api.exception;
 
-import com.github.paicoding.forum.api.model.vo.constants.StatusEnum;
+import com.xiongsu.api.vo.constants.StatusEnum;
 
 /**
  * @author XuYifei
