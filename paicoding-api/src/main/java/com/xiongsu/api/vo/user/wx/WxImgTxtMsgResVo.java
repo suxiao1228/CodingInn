@@ -12,9 +12,8 @@ import java.util.List;
  * 返回的数据结构体
  * <p>
  *
- * @author yihui
- * @link <a href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html"/>
- * @date 2022/6/20
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 @ToString(callSuper = true)

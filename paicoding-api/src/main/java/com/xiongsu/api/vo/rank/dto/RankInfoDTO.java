@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.rank.dto;
 
-import com.xiongsu.api.enums.rank.ActivityRankTimeEnum;
+import com.github.paicoding.forum.api.model.enums.rank.ActivityRankTimeEnum;
 import lombok.Data;
 
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * 排行榜信息
  *
- * @author YiHui
- * @date 2023/8/19
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class RankInfoDTO {

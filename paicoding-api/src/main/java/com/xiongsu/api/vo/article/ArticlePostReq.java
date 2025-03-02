@@ -1,9 +1,8 @@
 package com.xiongsu.api.vo.article;
 
-import com.xiongsu.api.enums.ArticleReadTypeEnum;
-import com.xiongsu.api.enums.ArticleTypeEnum;
-import com.xiongsu.api.enums.PushStatusEnum;
-import com.xiongsu.api.enums.SourceTypeEnum;
+import com.github.paicoding.forum.api.model.enums.ArticleTypeEnum;
+import com.github.paicoding.forum.api.model.enums.PushStatusEnum;
+import com.github.paicoding.forum.api.model.enums.SourceTypeEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,8 +11,8 @@ import java.util.Set;
 /**
  * 发布文章请求参数
  *
- * @author YiHui
- * @date 2022/7/24
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ArticlePostReq implements Serializable {
@@ -92,23 +91,6 @@ public class ArticlePostReq implements Serializable {
      * 专栏序号
      */
     private Long columnId;
-
-    /**
-     * 文章阅读类型
-     *
-     * @see ArticleReadTypeEnum#getType()
-     */
-    private Integer readType;
-
-    /**
-     * 当 ArticleReadTypeEnum 为 付费阅读时，这里记录具体的收款方式
-     */
-    private String payWay;
-
-    /**
-     * 付费解锁价格
-     */
-    private Integer payAmount;
 
     public PushStatusEnum pushStatus() {
         if ("post".equalsIgnoreCase(actionType)) {

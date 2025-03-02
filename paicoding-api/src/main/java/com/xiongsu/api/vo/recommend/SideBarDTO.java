@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.recommend;
 
-import com.xiongsu.api.enums.SidebarStyleEnum;
+import com.github.paicoding.forum.api.model.enums.SidebarStyleEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * 侧边推广信息
  *
- * @author YiHui
- * @date 2022/9/6
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 @Accessors(chain = true)

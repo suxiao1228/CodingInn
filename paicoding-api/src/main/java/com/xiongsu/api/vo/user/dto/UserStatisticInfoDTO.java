@@ -1,17 +1,16 @@
 package com.xiongsu.api.vo.user.dto;
 
-import com.xiongsu.api.vo.article.dto.YearArticleDTO;
+import com.github.paicoding.forum.api.model.vo.article.dto.YearArticleDTO;
 import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户主页信息
  *
- * @author louzai
- * @since 2022/7/19
+ * @author XuYifei
+ * @since 2024-07-12
  */
 @Data
 @ToString(callSuper = true)
@@ -66,9 +65,4 @@ public class UserStatisticInfoDTO extends BaseUserInfoDTO {
      * 创造历程
      */
     private List<YearArticleDTO> yearArticleList;
-
-    /**
-     * 作者的收款码信息
-     */
-    private Map<String, UserPayCodeDTO> payQrCodes;
 }

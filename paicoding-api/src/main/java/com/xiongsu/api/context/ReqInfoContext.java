@@ -8,16 +8,22 @@ import lombok.Data;
 import java.security.Principal;
 
 /**
- * 请求上下文，携带用户身份信息
+ * 请求上下文，携带用户身份相关信息
+ *
+ * @author XuYifei
+ * @date 2024-07-12
  */
 public class ReqInfoContext {
-    private static TransmittableThreadLocal<ReqInfo> contexts = new TransmittableThreadLocal<ReqInfo>();
+    private static TransmittableThreadLocal<ReqInfo> contexts = new TransmittableThreadLocal<>();
+
     public static void addReqInfo(ReqInfo reqInfo) {
         contexts.set(reqInfo);
     }
+
     public static void clear() {
         contexts.remove();
     }
+
     public static ReqInfo getReqInfo() {
         return contexts.get();
     }
@@ -28,28 +34,20 @@ public class ReqInfoContext {
          * appKey
          */
         private String appKey;
-
         /**
          * 访问的域名
-         * @return
          */
         private String host;
-
         /**
          * 访问路径
-         * @return
          */
         private String path;
-
         /**
          * 客户端ip
-         * @return
          */
         private String clientIp;
-
         /**
          * referer
-         * @return
          */
         private String referer;
         /**

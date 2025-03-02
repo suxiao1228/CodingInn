@@ -1,23 +1,20 @@
 package com.xiongsu.api.vo;
 
-import com.xiongsu.api.vo.constants.StatusEnum;
-import io.swagger.annotations.ApiModelProperty;
+import com.github.paicoding.forum.api.model.vo.constants.StatusEnum;
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * @author YiHui
- * @date 2022/7/6
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ResVo<T> implements Serializable {
     private static final long serialVersionUID = -510306209659393854L;
-    @ApiModelProperty(value = "返回结果说明", required = true)
-    private Status status;
+    protected Status status;
 
-    @ApiModelProperty(value = "返回的实体结果", required = true)
-    private T result;
+    protected T result;
 
 
     public ResVo() {
@@ -33,17 +30,12 @@ public class ResVo<T> implements Serializable {
     }
 
     public static <T> ResVo<T> ok(T t) {
-        return new ResVo<>(t);
+        return new ResVo<T>(t);
     }
 
-    private static final String OK_DEFAULT_MESSAGE = "ok";
-
-    public static ResVo<String> ok() {
-        return ok(OK_DEFAULT_MESSAGE);
-    }
-
+    @SuppressWarnings("unchecked")
     public static <T> ResVo<T> fail(StatusEnum status, Object... args) {
-        return new ResVo<>(Status.newStatus(status, args));
+        return new ResVo<>(com.github.paicoding.forum.api.model.vo.Status.newStatus(status, args));
     }
 
     public static <T> ResVo<T> fail(Status status) {

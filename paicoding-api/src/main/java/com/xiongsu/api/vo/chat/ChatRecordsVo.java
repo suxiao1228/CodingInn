@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.chat;
 
-import com.xiongsu.api.enums.ai.AISourceEnum;
+import com.github.paicoding.forum.api.model.enums.ai.AISourceEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 /**
  * 聊天记录
  *
- * @author YiHui
- * @date 2023/6/9
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 @Accessors(chain = true)

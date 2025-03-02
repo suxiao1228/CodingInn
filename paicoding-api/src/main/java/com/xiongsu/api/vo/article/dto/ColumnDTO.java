@@ -1,13 +1,13 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.xiongsu.api.enums.column.ColumnStatusEnum;
-import com.xiongsu.api.enums.column.ColumnTypeEnum;
-import com.xiongsu.api.vo.user.dto.ColumnFootCountDTO;
+import com.github.paicoding.forum.api.model.enums.column.ColumnStatusEnum;
+import com.github.paicoding.forum.api.model.enums.column.ColumnTypeEnum;
+import com.github.paicoding.forum.api.model.vo.user.dto.ColumnFootCountDTO;
 import lombok.Data;
 
 /**
- * @author YiHui
- * @date 2022/9/14
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ColumnDTO {

@@ -5,8 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author YiHui
- * @date 2022/7/24
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class TagDTO implements Serializable {

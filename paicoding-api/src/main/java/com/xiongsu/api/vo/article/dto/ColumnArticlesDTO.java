@@ -1,15 +1,14 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.xiongsu.api.enums.column.ColumnTypeEnum;
-import com.xiongsu.api.vo.comment.dto.TopCommentDTO;
-import com.xiongsu.api.vo.user.dto.SimpleUserInfoDTO;
+import com.github.paicoding.forum.api.model.enums.column.ColumnTypeEnum;
+import com.github.paicoding.forum.api.model.vo.comment.dto.TopCommentDTO;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * @author YiHui
- * @date 2022/9/14
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ColumnArticlesDTO {
@@ -54,7 +53,4 @@ public class ColumnArticlesDTO {
 
     // 翻页
     private ArticleOtherDTO other;
-
-    // 赞赏用户列表
-    private List<SimpleUserInfoDTO> payUsers;
 }

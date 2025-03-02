@@ -1,14 +1,14 @@
 package com.xiongsu.api.exception;
 
-import com.xiongsu.api.vo.Status;
-import com.xiongsu.api.vo.constants.StatusEnum;
+import com.github.paicoding.forum.api.model.vo.Status;
+import com.github.paicoding.forum.api.model.vo.constants.StatusEnum;
 import lombok.Getter;
 
 /**
  * 业务异常
  *
- * @author YiHui
- * @date 2022/9/2
+ * @author XuYifei
+ * @date 2024-07-12
  */
 public class ForumAdviceException extends RuntimeException {
     @Getter

@@ -6,8 +6,8 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * @author YiHui
- * @date 2022/9/7
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 @Accessors(chain = true)

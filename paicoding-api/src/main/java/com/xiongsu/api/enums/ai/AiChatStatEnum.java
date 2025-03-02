@@ -1,8 +1,8 @@
 package com.xiongsu.api.enums.ai;
 
 /**
- * @author YiHui
- * @date 2023/6/15
+ * @author XuYifei
+ * @date 2024-07-12
  */
 public enum AiChatStatEnum {
     IGNORE(-2) {

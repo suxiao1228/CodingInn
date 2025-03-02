@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
+    <modules>
+        <module>paicoding-web</module>
+        <module>paicoding-service</module>
+        <module>paicoding-core</module>
+        <module>paicoding-api</module>
+    </modules>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.0.9</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
     <groupId>com.xiongsu</groupId>
-    <artifactId>Inn</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <artifactId>paicoding-forum</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>paicoding-forum</name>
+    <description>simple forum by java &amp; spring</description>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <guava.version>31.1-jre</guava.version>
-        <mybaits-plus.version>3.5.2</mybaits-plus.version>
+        <guava.version>31.1-jre</guava.version>
+        <mybaits-plus.version>3.5.4</mybaits-plus.version>
+        <druid-spring-boot-starter.version>1.2.20</druid-spring-boot-starter.version>
         <aliyun-sdk-oss.version>3.17.2</aliyun-sdk-oss.version>
         <qrcode-plugin.version>3.0.0</qrcode-plugin.version>
-        <commons-io.version>2.16.1</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <hutool-all.version>5.8.15</hutool-all.version>
         <itextpdf.version>5.5.13.3</itextpdf.version>
         <kryo.version>5.4.0</kryo.version>
@@ -31,48 +42,36 @@
         <opencv.version>4.6.0-0</opencv.version>
         <sensitive.version>0.8.0</sensitive.version>
         <jwt.version>4.4.0</jwt.version>
-        <fastexcel.version>1.0.0</fastexcel.version>
+        <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <springdoc.version>1.8.0</springdoc.version>
+        <spring.boot.starter.amqp.version>3.2.5</spring.boot.starter.amqp.version>
     </properties>
-    <modules>
-        <module>paicoding-ui</module>
-        <module>paicoding-web</module>
-        <module>paicoding-service</module>
-        <module>paicoding-core</module>
-        <module>paicoding-api</module>
-    </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <name>paicoding-forum</name>
-    <description>simple forum by java &amp; spring</description>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.xiongsu</groupId>
                 <artifactId>paicoding-api</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.xiongsu</groupId>
                 <artifactId>paicoding-ui</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.xiongsu</groupId>
                 <artifactId>paicoding-service</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.xiongsu</groupId>
                 <artifactId>paicoding-core</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -80,11 +79,33 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybaits-plus.version}</version>
+            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>com.baomidou</groupId>-->
+            <!--                <artifactId>mybatis-plus-boot-starter</artifactId>-->
+            <!--                <version>${mybaits-plus.version}</version>-->
+            <!--            </dependency>-->
+            <!-- https://mvnrepository.com/artifact/org.realityforge.org.jetbrains.annotations/org.jetbrains.annotations -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>24.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
 
             <dependency>
@@ -143,7 +164,7 @@
 
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
 
@@ -165,10 +186,11 @@
                 <version>${opencv.version}</version>
             </dependency>
 
+            <!--AMQP依赖，包含RabbitMQ-->
             <dependency>
-                <groupId>cn.idev.excel</groupId>
-                <artifactId>fastexcel</artifactId>
-                <version>${fastexcel.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${spring.boot.starter.amqp.version}</version>
             </dependency>
 
         </dependencies>
@@ -247,4 +269,5 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
 </project>

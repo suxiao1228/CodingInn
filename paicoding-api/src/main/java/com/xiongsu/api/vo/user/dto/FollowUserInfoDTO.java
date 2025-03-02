@@ -7,8 +7,8 @@ import java.io.Serializable;
 /**
  * 关注者用户信息
  *
- * @author YiHui
- * @date 2022/11/2
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class FollowUserInfoDTO implements Serializable {

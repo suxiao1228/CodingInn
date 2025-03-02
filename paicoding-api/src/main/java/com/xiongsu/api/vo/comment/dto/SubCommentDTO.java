@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 评论树状结构
  *
- * @author louzai
- * @since 2022/7/19
+ * @author XuYifei
+ * @since 2024-07-12
  */
 @ToString(callSuper = true)
 @Data

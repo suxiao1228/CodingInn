@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * 文章操作枚举
  *
- * @author YiHui
- * @date 2022/9/3
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 public enum ArticleEventEnum {

@@ -1,14 +1,14 @@
 package com.xiongsu.api.vo.banner.dto;
 
-import com.xiongsu.api.entity.BaseDTO;
-import com.xiongsu.api.enums.ConfigTagEnum;
+import com.github.paicoding.forum.api.model.entity.BaseDTO;
+import com.github.paicoding.forum.api.model.enums.ConfigTagEnum;
 import lombok.Data;
 
 /**
  * Banner
  *
- * @author louzai
- * @date 2022-09-17
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ConfigDTO extends BaseDTO {

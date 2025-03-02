@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * 专栏文章的阅读类型
  *
- * @author YiHui
- * @date 2023/8/20
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @AllArgsConstructor
 @Getter

@@ -1,6 +1,6 @@
 package com.xiongsu.api.vo.notify;
 
-import com.xiongsu.api.enums.NotifyTypeEnum;
+import com.github.paicoding.forum.api.model.enums.NotifyTypeEnum;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,8 @@ import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * @author YiHui
- * @date 2022/9/3
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 @Setter

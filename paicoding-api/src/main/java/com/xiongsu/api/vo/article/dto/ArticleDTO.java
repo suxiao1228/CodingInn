@@ -1,10 +1,8 @@
 package com.xiongsu.api.vo.article.dto;
 
-import com.xiongsu.api.enums.ArticleReadTypeEnum;
-import com.xiongsu.api.enums.SourceTypeEnum;
-import com.xiongsu.api.enums.pay.ThirdPayWayEnum;
-import com.xiongsu.api.vo.user.dto.ArticleFootCountDTO;
-import com.xiongsu.api.vo.user.dto.SimpleUserInfoDTO;
+import com.github.paicoding.forum.api.model.enums.SourceTypeEnum;
+import com.github.paicoding.forum.api.model.vo.user.dto.ArticleFootCountDTO;
+import com.github.paicoding.forum.api.model.vo.user.dto.SimpleUserInfoDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,8 +13,8 @@ import java.util.List;
  * <p>
  * DTO 定义返回给web前端的实体类 (VO)
  *
- * @author YiHui
- * @date 2022/7/24
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ArticleDTO implements Serializable {
@@ -87,18 +85,6 @@ public class ArticleDTO implements Serializable {
     private Integer status;
 
     /**
-     * 阅读类型
-     *
-     * @see ArticleReadTypeEnum#getType()
-     */
-    private Integer readType;
-
-    /**
-     * ture 表示可以阅读 false 表示无法阅读全文
-     */
-    private Boolean canRead;
-
-    /**
      * 是否官方
      */
     private Integer officalStat;
@@ -157,16 +143,4 @@ public class ArticleDTO implements Serializable {
      * 点赞用户信息
      */
     private List<SimpleUserInfoDTO> praisedUsers;
-
-    /**
-     * 支付金额，单位（元）, 为了防止精度问题，返回String格式
-     */
-    private String payAmount;
-
-    /**
-     * 付款方式
-     *
-     * @see ThirdPayWayEnum#wxPay()
-     */
-    private String payWay;
 }

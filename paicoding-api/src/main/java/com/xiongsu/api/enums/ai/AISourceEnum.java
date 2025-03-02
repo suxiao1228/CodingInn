@@ -3,8 +3,8 @@ package com.xiongsu.api.enums.ai;
 import lombok.Getter;
 
 /**
- * @author YiHui
- * @date 2023/6/9
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Getter
 public enum AISourceEnum {
@@ -27,24 +27,6 @@ public enum AISourceEnum {
         @Override
         public boolean syncSupport() {
             return false;
-        }
-    },
-    /**
-     * 智谱 AI
-     */
-    ZHI_PU_AI(4, "智谱") {
-        @Override
-        public boolean asyncSupport() {
-            return true;
-        }
-    },
-    /**
-     * 智谱 AI
-     */
-    ALI_AI(5, "阿里") {
-        @Override
-        public boolean asyncSupport() {
-            return true;
         }
     },
     ;

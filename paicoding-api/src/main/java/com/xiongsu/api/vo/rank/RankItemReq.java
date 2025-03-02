@@ -1,8 +1,8 @@
 package com.xiongsu.api.vo.rank;
 
 /**
- * @author YiHui
- * @date 2023/8/19
+ * @author XuYifei
+ * @date 2024-07-12
  */
 public class RankItemReq {
     private String time;

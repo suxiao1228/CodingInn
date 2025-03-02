@@ -2,34 +2,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>paicoding-forum</artifactId>
+        <groupId>com.xiongsu</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>Inn</artifactId>
-        <groupId>com.xiongsu</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
     <artifactId>paicoding-web</artifactId>
 
     <properties>
         <jmh.version>1.35</jmh.version>
         <webp-imageio.version>0.2.1</webp-imageio.version>
         <spock.version>2.1-groovy-3.0</spock.version>
-        <groovy.version>3.0.23</groovy.version>
+        <!--        <groovy.version>3.0.12</groovy.version>-->
         <spock.mockfree.version>1.0.3</spock.mockfree.version>
     </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>com.xiongsu</groupId>
-            <artifactId>paicoding-ui</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.paicoding.forum</groupId>-->
+        <!--            <artifactId>paicoding-ui</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.xiongsu</groupId>
             <artifactId>paicoding-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
+
 
         <!--   以下为基础依赖  -->
         <dependency>
@@ -133,17 +133,36 @@
         </dependency>
 
         <!-- Spock -->
+
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
             <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
 
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
+            <version>${druid-spring-boot-starter.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.codehaus.groovy</groupId>-->
+        <!--            <artifactId>groovy</artifactId>-->
+        <!--            <version>${groovy.version}</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
+            <version>4.0.21</version>
             <scope>test</scope>
         </dependency>
 

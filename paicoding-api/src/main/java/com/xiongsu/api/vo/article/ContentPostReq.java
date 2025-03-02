@@ -7,8 +7,8 @@ import java.io.Serializable;
 /**
  * 发布文章请求参数
  *
- * @author YiHui
- * @date 2022/7/24
+ * @author XuYifei
+ * @date 2024-07-12
  */
 @Data
 public class ContentPostReq implements Serializable {
