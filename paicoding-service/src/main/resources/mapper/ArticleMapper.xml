@@ -104,5 +104,37 @@
         left join user_info u on a.user_id = u.user_id
         <include refid="articlesByParams"/>
     </select>
+    <select id="listHistoryArticlesByUserId"
+            resultType="com.xiongsu.service.article.repository.entity.ArticleDO">
+        select a.* from article a
+            inner join
+            (select document_id, update_time, read_stat
+             from user_foot
+             where user_id = #{userId} and read_stat = 1)
+#                 这里注意要加上deleted = 0，否则会查询到已删除的文章
+                as u on a.id = u.document_id and a.deleted = 0
+                   order by u.update_time desc
+    </select>
+
+    <select id="listStarArticlesByUserId"
+            resultType="com.xiongsu.service.article.repository.entity.ArticleDO">
+        select a.* from article a
+            inner join
+            (select document_id, update_time, collection_stat
+             from user_foot
+             where user_id = #{userId} and collection_stat = 1)
+#                 这里注意要加上deleted = 0，否则会查询到已删除的文章；还有就是status = 1，只查询已发布的文章
+                as u on a.id = u.document_id and a.deleted = 0 and a.status = 1
+            order by u.update_time desc
+    </select>
+    <select id="selectArticlesByTag"
+            resultType="com.xiongsu.service.article.repository.entity.ArticleDO">
+        select article.* from article
+        left join article_tag t on article.id = t.article_id
+        where t.tag_id = #{tagId}
+          and article.status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
+          and article.deleted =${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+        order by article.offical_stat desc, article.topping_stat desc, article.create_time desc
+    </select>
 
 </mapper>

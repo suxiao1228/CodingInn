@@ -5,12 +5,12 @@ image:
   cdn-host:
   oss:
     type: local
-    prefix: paicoding/
+    prefix:
     endpoint:
     ak:
     sk:
     bucket:
-    host: https://cdn.tobebetterjavaer.com/
+    host:
 
 spring:
   web:

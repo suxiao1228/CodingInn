@@ -1,3 +1,4 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+## Auto Configure
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#com.xiongsu.core.ForumCoreAutoConfig
 com.xiongsu.core.ForumCoreAutoConfig

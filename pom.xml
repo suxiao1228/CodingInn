@@ -62,6 +62,13 @@
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
+<!--            <dependency>-->
+<!--                <groupId>io.r2dbc</groupId>-->
+<!--                <artifactId>r2dbc-spi</artifactId>-->
+<!--                <version>1.0.0.Final</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
                 <groupId>com.xiongsu</groupId>
                 <artifactId>paicoding-service</artifactId>
@@ -102,11 +109,11 @@
                 <version>${knife4j.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springdoc</groupId>-->
+<!--                <artifactId>springdoc-openapi-ui</artifactId>-->
+<!--                <version>${springdoc.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.aliyun.oss</groupId>
@@ -168,6 +175,8 @@
                 <version>${knife4j.version}</version>
             </dependency>
 
+
+
             <!-- 引入 MapStruct -->
             <dependency>
                 <groupId>org.mapstruct</groupId>
@@ -192,6 +201,8 @@
                 <artifactId>spring-boot-starter-amqp</artifactId>
                 <version>${spring.boot.starter.amqp.version}</version>
             </dependency>
+
+
 
         </dependencies>
     </dependencyManagement>
