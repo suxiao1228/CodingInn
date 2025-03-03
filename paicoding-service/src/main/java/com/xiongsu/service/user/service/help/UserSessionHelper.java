@@ -8,6 +8,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.hui.quick.plugin.qrcode.util.json.JsonUtil;
 import com.xiongsu.core.cache.RedisClient;
+import com.xiongsu.core.mdc.SelfTraceIdGenerator;
 import com.xiongsu.core.util.MapUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
