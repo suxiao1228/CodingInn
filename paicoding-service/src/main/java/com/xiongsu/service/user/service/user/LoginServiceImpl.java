@@ -6,6 +6,8 @@ import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.user.UserPwdLoginReq;
 import com.xiongsu.service.user.repository.entity.UserDO;
 import com.xiongsu.service.user.service.LoginService;
+import com.xiongsu.service.user.service.help.UserPwdEncoder;
+import com.xiongsu.service.user.service.help.UserSessionHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Long autoRegisterWxUserInfo(String uuid) {
-        return 0;
+        return 0L;
     }
 
     /**
