@@ -1,5 +1,7 @@
 package com.xiongsu.service.user.service;
 
+import com.xiongsu.api.vo.user.UserPwdLoginReq;
+
 public interface LoginService {
     String SESSION_KEY = "f-session";
     String USER_DEVICE_KEY = "f-device";
@@ -43,5 +45,5 @@ public interface LoginService {
      * @param loginReq 登录信息
      * @return
      */
-    //String registerByUserPwd(UserPwdLoginReq loginReq);
+    String registerByUserPwd(UserPwdLoginReq loginReq);
 }

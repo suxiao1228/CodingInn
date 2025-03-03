@@ -8,6 +8,7 @@ import com.xiongsu.service.user.repository.dao.UserDao;
 import com.xiongsu.service.user.repository.entity.UserDO;
 import com.xiongsu.service.user.service.LoginService;
 import com.xiongsu.service.user.service.UserAiService;
+import com.xiongsu.service.user.service.UserService;
 import com.xiongsu.service.user.service.help.UserPwdEncoder;
 import com.xiongsu.service.user.service.help.UserSessionHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +82,47 @@ public class LoginServiceImpl implements LoginService {
         userAiService.initOrUpdateAiInfo(new UserPwdLoginReq().setUserId(userId).setUsername(username).setPassword(password));
 
         // 登录成功，返回对应的session
+        ReqInfoContext.getReqInfo().setUserId(userId);
+        return userSessionHelper.genToken(userId);
+    }
+
+    /**
+     * 用户名密码方式登录，若用户不存在，则进行注册
+     *
+     * @param loginReq 登录信息
+     * @return
+     */
+    @Override
+    public String registerByUserPwd(UserPwdLoginReq loginReq) {
+        // 1. 前置校验
+      //  registerPreCheck(loginReq);
+
+        // 2. 判断当前用户是否登录，若已经登录，则直接走绑定流程
+        Long userId = ReqInfoContext.getReqInfo().getUserId();
+        loginReq.setUserId(userId);
+        if (userId != null) {
+            // 2.1 如果用户已经登录，则走绑定用户信息流程
+            userService.bindUserInfo(loginReq);
+            return ReqInfoContext.getReqInfo().getSession();
+        }
+
+
+        // 3. 尝试使用用户名进行登录，若成功，则依然走绑定流程
+        UserDO user = userDao.getUserByUserName(loginReq.getUsername());
+        if (user != null) {
+            if (!userPwdEncoder.match(loginReq.getPassword(), user.getPassword())) {
+                // 3.1 用户名已经存在
+                throw ExceptionUtil.of(StatusEnum.USER_LOGIN_NAME_REPEAT, loginReq.getUsername());
+            }
+
+            // 3.2 用户存在，尝试走绑定流程
+            userId = user.getId();
+            loginReq.setUserId(userId);
+            userAiService.initOrUpdateAiInfo(loginReq);
+        } else {
+            //4. 走用户注册流程
+            userId = registerService.registerByUserNameAndPassword(loginReq);
+        }
         ReqInfoContext.getReqInfo().setUserId(userId);
         return userSessionHelper.genToken(userId);
     }

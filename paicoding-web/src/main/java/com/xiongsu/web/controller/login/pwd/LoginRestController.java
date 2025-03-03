@@ -10,6 +10,7 @@ import com.xiongsu.core.permission.UserRole;
 import com.xiongsu.core.util.SessionUtil;
 import com.xiongsu.service.user.service.LoginService;
 import com.xiongsu.web.controller.home.vo.LoginSuccessVo;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @RequestMapping
 public class LoginRestController {
 
-    @Autowired
+    @Resource
     private LoginService loginService;
 
     /**

@@ -65,5 +65,8 @@ public class UserSessionHelper {
         return token;
     }
 
+    public void removeSession(String session) {
+        RedisClient.del(session);
+    }
 
 }
