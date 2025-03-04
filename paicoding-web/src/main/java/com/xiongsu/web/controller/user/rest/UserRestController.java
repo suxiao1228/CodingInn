@@ -3,11 +3,15 @@ package com.xiongsu.web.controller.user.rest;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xiongsu.api.context.ReqInfoContext;
+import com.xiongsu.api.enums.FollowSelectEnum;
+import com.xiongsu.api.enums.HomeSelectEnum;
 import com.xiongsu.api.vo.ResVo;
 import com.xiongsu.api.vo.article.dto.ArticleDTO;
+import com.xiongsu.api.vo.article.dto.TagSelectDTO;
 import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.user.UserInfoSaveReq;
 import com.xiongsu.api.vo.user.UserRelationReq;
+import com.xiongsu.api.vo.user.dto.FollowUserInfoDTO;
 import com.xiongsu.api.vo.user.dto.UserStatisticInfoDTO;
 import com.xiongsu.core.permission.Permission;
 import com.xiongsu.core.permission.UserRole;
@@ -21,6 +25,7 @@ import jakarta.annotation.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -118,4 +123,71 @@ public class UserRestController {
         return ResultVo.ok(articleReadService.queryStarArticlesByUserIdPagination(userId, currentPage, pageSize));
     }
 
+    /**
+     * 获取用户主页的关注列表
+     */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "follows")
+    public ResultVo<IPage<FollowUserInfoDTO>> getUserFollowed(@RequestParam(name = "userId") Long userId,
+                                                              @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return ResultVo.ok(userRelationService.getUserFollowListPagination(userId, currentPage, pageSize));
+    }
+
+
+    /**
+     * 获取用户主页的粉丝列表
+     * @param userId
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "fans")
+    public ResultVo<IPage<FollowUserInfoDTO>> getUserFans(@RequestParam(name = "userId") Long userId,
+                                                          @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return ResultVo.ok(userRelationService.getUserFansListPagination(userId, currentPage, pageSize));
+    }
+
+    /**
+     * 返回Home页选择列表标签
+     *
+     * @param selectType
+     * @param isAuthor true 表示当前为查看自己的个人主页
+     * @return
+     */
+    private List<TagSelectDTO> homeSelectTags(String selectType, boolean isAuthor) {
+        List<TagSelectDTO> tags = new ArrayList<>();
+        homeSelectTags.forEach(tag -> {
+            if (!isAuthor && "read".equals(tag)) {
+                // 只有本人才能看自己的阅读历史
+                return;
+            }
+            TagSelectDTO tagSelectDTO = new TagSelectDTO();
+            tagSelectDTO.setSelectType(tag);
+            tagSelectDTO.setSelectDesc(HomeSelectEnum.fromCode(tag).getDesc());
+            tagSelectDTO.setSelected(selectType.equals(tag));
+            tags.add(tagSelectDTO);
+        });
+        return tags;
+    }
+
+    /**
+     * 返回关注用户选择列表标签
+     *
+     * @param selectType
+     * @return
+     */
+    private List<TagSelectDTO> followSelectTags(String selectType) {
+        List<TagSelectDTO> tags = new ArrayList<>();
+        followSelectTags.forEach(tag -> {
+            TagSelectDTO tagSelectDTO = new TagSelectDTO();
+            tagSelectDTO.setSelectType(tag);
+            tagSelectDTO.setSelectDesc(FollowSelectEnum.fromCode(tag).getDesc());
+            tagSelectDTO.setSelected(selectType.equals(tag));
+            tags.add(tagSelectDTO);
+        });
+        return tags;
+    }
 }

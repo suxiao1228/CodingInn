@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.xiongsu.api.entity.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.ibatis.javassist.SerialVersionUID;
 
 /**
  * 用户关系表
