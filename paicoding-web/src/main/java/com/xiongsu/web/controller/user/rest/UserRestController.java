@@ -95,4 +95,8 @@ public class UserRestController {
                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
         return ResultVo.ok(articleReadService.queryArticlesByUserIdPagination(userId, currentPage, pageSize));
     }
+
+    /**
+     *
+     */
 }

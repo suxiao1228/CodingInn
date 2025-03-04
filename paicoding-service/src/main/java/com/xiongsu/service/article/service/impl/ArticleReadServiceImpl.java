@@ -9,9 +9,17 @@ import com.xiongsu.api.vo.PageVo;
 import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
+import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.service.article.conveter.ArticleConverter;
+import com.xiongsu.service.article.repository.dao.ArticleDao;
+import com.xiongsu.service.article.repository.dao.ArticleTagDao;
 import com.xiongsu.service.article.repository.entity.ArticleDO;
 import com.xiongsu.service.article.service.ArticleReadService;
+import com.xiongsu.service.article.service.CategoryService;
+import com.xiongsu.service.statistics.service.CountService;
+import com.xiongsu.service.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +31,20 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ArticleReadServiceImpl implements ArticleReadService {
+    @Autowired
+    private CategoryService categoryService;
 
+    @Autowired
+    private ArticleTagDao articleTagDao;
+
+    @Autowired
+    private CountService countService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ArticleDao articleDao;
 
     @Override
     public ArticleDO queryBasicArticle(Long articleId) {
@@ -72,7 +93,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public Long queryArticleCountByCategory(Long categoryId) {
-        return 0;
+        return 0L;
     }
 
     @Override
@@ -119,9 +140,32 @@ public class ArticleReadServiceImpl implements ArticleReadService {
      */
     @Override
     public IPage<ArticleDTO> queryArticlesByUserIdPagination(Long userId, int currentPage, int pageSize) {
-        return null;
+
+        IPage<ArticleDO> articleDOIPage = articleDao.listArticlesByUserIdPagination(userId, currentPage, pageSize);
+
+        return articleDOIPage.convert(this::fillArticleRelatedInfo);
     }
 
+    /**
+     * 补全文章的阅读计数、作者、分类、标签等信息
+     *
+     * @param record
+     * @return
+     */
+    private ArticleDTO fillArticleRelatedInfo(ArticleDO record) {
+        ArticleDTO dto = ArticleConverter.toDto(record);
+        // 分类信息
+        dto.getCategory().setCategory(categoryService.queryCategoryName(record.getCategoryId()));
+        // 标签列表
+        dto.setTags(articleTagDao.queryArticleTagDetails(record.getId()));
+        // 阅读计数统计
+        dto.setCount(countService.queryArticleStatisticInfo(record.getId()));
+        // 作者信息
+        BaseUserInfoDTO author = userService.queryBasicUserInfo(dto.getAuthor());
+        dto.setAuthorName(author.getUserName());
+        dto.setAuthorAvatar(author.getPhoto());
+        return dto;
+    }
     @Override
     public PageListVo<ArticleDTO> buildArticleListVo(List<ArticleDO> records, long pageSize) {
         return null;
