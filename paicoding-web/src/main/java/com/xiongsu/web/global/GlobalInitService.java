@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.xiongsu.api.context.ReqInfoContext;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.service.user.service.UserService;
 import com.xiongsu.web.config.GlobalViewConfig;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class GlobalInitService {
     @Value("${env.name}")
     private String env;
-    @Autowired
+    @Resource
     private UserService userService;
 
     @Resource
