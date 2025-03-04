@@ -97,6 +97,25 @@ public class UserRestController {
     }
 
     /**
-     *
+     *获取用户主页的阅读历史
      */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "history")
+    public ResultVo<IPage<ArticleDTO>> getUserHistoryArticles(@RequestParam(name = "userId") Long userId,
+                                                              @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return ResultVo.ok(articleReadService.queryHistoryArticlesByUserIdPagination(userId, currentPage, pageSize));
+    }
+
+    /**
+     * 获取用户主页的收藏列表
+     */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "star")
+    public ResultVo<IPage<ArticleDTO>> getUserStarArticles(@RequestParam(name = "userId") Long userId,
+                                                           @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return ResultVo.ok(articleReadService.queryStarArticlesByUserIdPagination(userId, currentPage, pageSize));
+    }
+
 }

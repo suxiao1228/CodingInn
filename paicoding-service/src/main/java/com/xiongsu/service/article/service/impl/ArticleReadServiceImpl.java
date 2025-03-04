@@ -2,6 +2,7 @@ package com.xiongsu.service.article.service.impl;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiongsu.api.enums.HomeSelectEnum;
 import com.xiongsu.api.vo.PageListVo;
 import com.xiongsu.api.vo.PageParam;
@@ -121,14 +122,34 @@ public class ArticleReadServiceImpl implements ArticleReadService {
         return null;
     }
 
+    /**
+     * 根据用户id分页查询用户浏览的历史文章
+     * @param userId
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
     @Override
     public IPage<ArticleDTO> queryHistoryArticlesByUserIdPagination(Long userId, int currentPage, int pageSize) {
-        return null;
+        Page<ArticleDO> page = new Page<>(currentPage, pageSize);
+        IPage<ArticleDO> articleDOIPage = articleDao.listHistoryArticlesByUserIdPagination(page, userId);
+
+        return articleDOIPage.convert(this::fillArticleRelatedInfo);
     }
 
+    /**
+     * 根据用户id分页查询用户收藏的文章
+     * @param userId
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
     @Override
     public IPage<ArticleDTO> queryStarArticlesByUserIdPagination(Long userId, int currentPage, int pageSize) {
-        return null;
+        Page<ArticleDO> page = new Page<>();
+        IPage<ArticleDO> articleDOIPage = articleDao.listStarArticlesByUserIdPagination(page, userId);
+
+        return articleDOIPage.convert(this::fillArticleRelatedInfo);
     }
 
     /**
