@@ -74,7 +74,8 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public PageListVo<ArticleDTO> queryArticlesByCategory(Long categoryId, PageParam page) {
-        return null;
+        List<ArticleDO> records = articleDao.listArticlesByCategoryId(categoryId, page);
+        return buildArticleListVo(records, page.getPageSize());
     }
 
     @Override
