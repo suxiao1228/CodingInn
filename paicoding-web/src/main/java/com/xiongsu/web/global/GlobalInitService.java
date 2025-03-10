@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.xiongsu.api.context.ReqInfoContext;
 import com.xiongsu.api.vo.seo.Seo;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.core.util.NumUtil;
 import com.xiongsu.core.util.SessionUtil;
 import com.xiongsu.service.user.service.LoginService;
 import com.xiongsu.service.user.service.UserService;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,6 +27,10 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Order(-1)//用于指定 Bean 的执行顺序
+//@Order(-1) 具体含义
+//@Order(-1) 代表该 Bean 的 执行优先级高于 @Order(0) 或 @Order(1)。
+//例如，在多个 Spring AOP 切面或 拦截器中，如果一个 Bean 需要 最先执行，就可以使用 @Order(-1)。
 public class GlobalInitService {
     @Value("${env.name}")
     private String env;

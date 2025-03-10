@@ -17,6 +17,10 @@
             <artifactId>paicoding-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.xiongsu</groupId>
+            <artifactId>paicoding-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
