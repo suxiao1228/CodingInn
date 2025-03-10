@@ -3,7 +3,7 @@ package com.xiongsu.service.article.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xiongsu.api.enums.HomeSelectEnum;
+import com.xiongsu.api.enums.*;
 import com.xiongsu.api.vo.PageListVo;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.api.vo.PageVo;
@@ -11,6 +11,7 @@ import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.service.article.cache.ArticleCacheManager;
 import com.xiongsu.service.article.conveter.ArticleConverter;
 import com.xiongsu.service.article.repository.dao.ArticleDao;
 import com.xiongsu.service.article.repository.dao.ArticleTagDao;
@@ -18,13 +19,17 @@ import com.xiongsu.service.article.repository.entity.ArticleDO;
 import com.xiongsu.service.article.service.ArticleReadService;
 import com.xiongsu.service.article.service.CategoryService;
 import com.xiongsu.service.statistics.service.CountService;
+import com.xiongsu.service.user.repository.entity.UserFootDO;
+import com.xiongsu.service.user.service.UserFootService;
 import com.xiongsu.service.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 文章查询相关服务类
@@ -33,10 +38,23 @@ import java.util.Map;
 @Slf4j
 public class ArticleReadServiceImpl implements ArticleReadService {
     @Autowired
-    private CategoryService categoryService;
+    private ArticleDao articleDao;
 
     @Autowired
     private ArticleTagDao articleTagDao;
+
+
+    @Autowired
+    private ArticleReadService articleService;
+
+    @Autowired
+    private CategoryService categoryService;
+    /**
+     * 在一个项目中，UserFootService 就是内部服务调用
+     * 拆微服务时，这个会作为远程服务访问
+     */
+    @Autowired
+    private UserFootService userFootService;
 
     @Autowired
     private CountService countService;
@@ -45,7 +63,11 @@ public class ArticleReadServiceImpl implements ArticleReadService {
     private UserService userService;
 
     @Autowired
-    private ArticleDao articleDao;
+    private ArticleCacheManager articleCacheManager;
+
+    // 是否开启ES
+    @Value("${elasticsearch.open:false}")
+    private Boolean openES;
 
     @Override
     public ArticleDO queryBasicArticle(Long articleId) {
@@ -67,9 +89,47 @@ public class ArticleReadServiceImpl implements ArticleReadService {
         return null;
     }
 
+    /**
+     * 查询文章所有的关联信息，正文，分类，标签，阅读计数，当前登录用户是否点赞，评论过
+     * @param articleId   文章id
+     * @param readUser 当前查看的用户ID
+     * @return
+     */
     @Override
-    public ArticleDTO queryFullArticleInfo(Long articleId, Long currentUser) {
-        return null;
+    public ArticleDTO queryFullArticleInfo(Long articleId, Long readUser) {
+        ArticleDTO article;
+
+        acticle = articleCacheManager.getArticleInfo(articleId);
+
+        if (article == null) {
+            article = queryDetailArticleInfo(articleId);
+            articleCacheManager.setArticleInfo(articleId, article);
+        }
+
+        //文章阅读计数+1
+        countService.incrArticleReadCount(article.getAuthor(), article);
+
+        //文章的操作标记
+        if (readUser != null) {
+            //更新用于足迹，并判断是否点赞，评论，收藏
+            UserFootDO foot = userFootService.saveOrUpdateUserFoot(DocumentTypeEnum.ARTICLE, articleId,
+                    article.getAuthor(), readUser, OperateTypeEnum.READ);
+            article.setPraised(Objects.equals(foot.getPraiseStat(), PraiseStatEnum.PRAISE.getCode()));
+            article.setCommented(Objects.equals(foot.getCommentStat(), CommentStatEnum.COMMENT.getCode()));
+            article.setCollected(Objects.equals(foot.getCollectionStat(), CollectionStatEnum.COLLECTION.getCode()));
+        } else {
+            // 未登录，全部设置为未处理
+            article.setPraised(false);
+            article.setCommented(false);
+            article.setCollected(false);
+        }
+
+        //更新文章统计计数
+        article.setCount(countService.queryArticleStatisticInfo(articleId));
+
+        //设置文章的点赞列表
+        article.setPraisedUsers(userFootService.queryArticlePraisedUsers(articleId));
+        return article;
     }
 
     @Override
