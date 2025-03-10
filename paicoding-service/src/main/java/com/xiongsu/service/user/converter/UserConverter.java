@@ -13,6 +13,7 @@ import com.xiongsu.api.vo.user.dto.SimpleUserInfoDTO;
 import com.xiongsu.api.vo.user.dto.UserStatisticInfoDTO;
 import com.xiongsu.service.user.repository.entity.UserDO;
 import com.xiongsu.service.user.repository.entity.UserInfoDO;
+import com.xiongsu.service.user.repository.entity.UserRelationDO;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -81,7 +82,7 @@ public class UserConverter {
         UserRelationDO userRelationDO = new UserRelationDO();
         userRelationDO.setUserId(req.getUserId());
         userRelationDO.setFollowUserId(ReqInfoContext.getReqInfo().getUserId());
-        userRelationDO.setFollowState(req.getFollowed() ? FollowStateEnum.FOLLOW.getCode() : FollowStateEnum.CANCEL_FOLLOW.getCode());
+        userRelationDO.setFollowState(Long.valueOf(req.getFollowed() ? FollowStateEnum.FOLLOW.getCode() : FollowStateEnum.CANCEL_FOLLOW.getCode()));
         return userRelationDO;
     }
 
