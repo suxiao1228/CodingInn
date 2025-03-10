@@ -3,8 +3,10 @@ package com.xiongsu.service.statistics.service.impl;
 import com.xiongsu.api.vo.user.dto.ArticleFootCountDTO;
 import com.xiongsu.api.vo.user.dto.UserStatisticInfoDTO;
 import com.xiongsu.core.cache.RedisClient;
+import com.xiongsu.service.article.repository.dao.ArticleDao;
 import com.xiongsu.service.statistics.constants.CountConstants;
 import com.xiongsu.service.statistics.service.CountService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class CountServiceImpl implements CountService {
+    @Resource
+    private ArticleDao articleDao;
+
     @Override
     public ArticleFootCountDTO queryArticleCountInfoByArticleId(Long articleId) {
         return null;
@@ -54,7 +59,15 @@ public class CountServiceImpl implements CountService {
 
     @Override
     public void incrArticleReadCount(Long authorUserId, Long articleId) {
-
+        //db层的计数+1
+        articleDao.incrReadCount(articleId);
+        //redis的计数器 + 1
+        RedisClient.pipelineAction()
+                .add(CountConstants.ARTICLE_STATISTIC_INFO + articleId, CountConstants.READ_COUNT,
+                        (connection, key, value) -> connection.hIncrBy(key, value, 1))
+                .add(CountConstants.USER_STATISTIC_INFO + authorUserId, CountConstants.READ_COUNT,
+                        (connection, key, value) -> connection.hIncrBy(key, value, 1))
+                .execute();
     }
 
     @Override
