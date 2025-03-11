@@ -13,6 +13,8 @@ import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -28,6 +30,14 @@ public class CategoryServiceImpl implements CategoryService {
      * 分类数一般不会特别多，如编程领域可以预期的分类将不会超过30，所以可以做一个全量的内存缓存
      * todo 后续可改为Guava -> Redis
      */
+    //🔹 1. LoadingCache 作用
+    //LoadingCache<K, V> 是 Guava Cache 的核心接口之一，支持 自动加载 和 过期清理，用于存储键值对（K -> V）。
+    //
+    //在你的代码中：
+    //
+    //Long 作为 键（categoryId）。
+    //CategoryDTO 作为 值（分类数据对象）。
+    //categoryCaches 充当 缓存容器，存储 CategoryDTO 以减少数据库查询，提高访问速度。
     private LoadingCache<Long, CategoryDTO> categoryCaches;
 
     private CategoryDao categoryDao;
@@ -50,9 +60,21 @@ public class CategoryServiceImpl implements CategoryService {
             }
         });
     }
+
+    /**
+     * 查询所有的分类
+     * @param categoryId
+     * @return
+     */
     @Override
     public String queryCategoryName(Long categoryId) {
-        return categoryCaches.getUnchecked(categoryId).getCategory();
+        if (categoryCaches.size() <= 5) {
+            refreshCache();
+        }
+        List<CategoryDTO> list = new ArrayList<>(categoryCaches.asMap().values());
+        list.removeIf(s -> s.getCategoryId() <= 0);
+        list.sort(Comparator.comparingInt(CategoryDTO::getRank));
+        return list.toString();
     }
 
     @Override

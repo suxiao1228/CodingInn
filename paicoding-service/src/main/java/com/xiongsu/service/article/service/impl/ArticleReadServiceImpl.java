@@ -11,6 +11,7 @@ import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
+import com.xiongsu.core.util.ArticleUtil;
 import com.xiongsu.service.article.cache.ArticleCacheManager;
 import com.xiongsu.service.article.conveter.ArticleConverter;
 import com.xiongsu.service.article.repository.dao.ArticleDao;
@@ -69,6 +70,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
     @Value("${elasticsearch.open:false}")
     private Boolean openES;
 
+
     @Override
     public ArticleDO queryBasicArticle(Long articleId) {
         return null;
@@ -76,7 +78,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public String generateSummary(String content) {
-        return "";
+        return ArticleUtil.pickSummary(content);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public Map<Long, Long> queryArticleCountsByCategory() {
-        return Map.of();
+        return articleDao.countArticleByCategoryId();
     }
 
     @Override
