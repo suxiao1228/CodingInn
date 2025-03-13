@@ -75,7 +75,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public ArticleDO queryBasicArticle(Long articleId) {
-        return null;
+        return articleDao.getById(articleId);
     }
 
     @Override

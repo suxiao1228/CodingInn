@@ -9,6 +9,7 @@ import com.xiongsu.api.event.MessageQueueEvent;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.api.vo.PageVo;
 import com.xiongsu.api.vo.ResVo;
+import com.xiongsu.api.vo.article.ArticlePostReq;
 import com.xiongsu.api.vo.article.ContentPostReq;
 import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.ArticleOtherDTO;
@@ -41,6 +42,7 @@ import com.xiongsu.web.controller.article.vo.ArticleDetailVo;
 import com.xiongsu.web.controller.home.helper.IndexRecommendHelper;
 import com.xiongsu.web.global.vo.ResultVo;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -256,4 +258,20 @@ public class ArticleRestController {
         return ResVo.ok(true);
     }
 
+    /**
+     * 发布文章，完成后跳转到详情页
+     *
+     * @return
+     */
+    @Permission(role = UserRole.LOGIN)
+    @PostMapping(path = "post")
+    @MdcDot(bizCode = "#req.articleId")
+    public ResVo<Long> post(@RequestBody ArticlePostReq req, HttpServletResponse response) throws IOException {
+        Long id = articleWriteService.saveArticle(req, ReqInfoContext.getReqInfo().getUserId());
+        // 如果使用后端重定向，可以使用下面两种策略
+//        return "redirect:/article/detail/" + id;
+//        response.sendRedirect("/article/detail/" + id);
+        // 这里采用前端重定向策略
+        return ResVo.ok(id);
+    }
 }
