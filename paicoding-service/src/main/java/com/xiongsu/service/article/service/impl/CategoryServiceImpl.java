@@ -68,18 +68,18 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public String queryCategoryName(Long categoryId) {
+        return categoryCaches.getUnchecked(categoryId).getCategory();
+    }
+
+    @Override
+    public List<CategoryDTO> loadAllCategories() {
         if (categoryCaches.size() <= 5) {
             refreshCache();
         }
         List<CategoryDTO> list = new ArrayList<>(categoryCaches.asMap().values());
         list.removeIf(s -> s.getCategoryId() <= 0);
         list.sort(Comparator.comparingInt(CategoryDTO::getRank));
-        return list.toString();
-    }
-
-    @Override
-    public List<CategoryDTO> loadAllCategories() {
-        return List.of();
+        return list;
     }
 
     @Override

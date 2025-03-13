@@ -1,6 +1,11 @@
 package com.xiongsu.web.controller.article.rest;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xiongsu.api.context.ReqInfoContext;
+import com.xiongsu.api.enums.DocumentTypeEnum;
+import com.xiongsu.api.enums.NotifyTypeEnum;
+import com.xiongsu.api.enums.OperateTypeEnum;
+import com.xiongsu.api.event.MessageQueueEvent;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.api.vo.PageVo;
 import com.xiongsu.api.vo.ResVo;
@@ -9,19 +14,31 @@ import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.ArticleOtherDTO;
 import com.xiongsu.api.vo.article.dto.CategoryDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
+import com.xiongsu.api.vo.article.response.CategoryArticlesResponseDTO;
 import com.xiongsu.api.vo.comment.dto.TopCommentDTO;
+import com.xiongsu.api.vo.constants.StatusEnum;
+import com.xiongsu.api.vo.notify.NotifyMsgEvent;
 import com.xiongsu.api.vo.recommend.SideBarDTO;
 import com.xiongsu.api.vo.user.dto.UserStatisticInfoDTO;
+import com.xiongsu.core.common.CommonConstants;
+import com.xiongsu.core.mdc.MdcDot;
+import com.xiongsu.core.permission.Permission;
+import com.xiongsu.core.permission.UserRole;
+import com.xiongsu.core.util.SpringUtil;
+import com.xiongsu.service.article.repository.entity.ArticleDO;
 import com.xiongsu.service.article.repository.entity.ColumnArticleDO;
 import com.xiongsu.service.article.service.ArticleReadService;
 import com.xiongsu.service.article.service.CategoryService;
 import com.xiongsu.service.article.service.ColumnService;
 import com.xiongsu.service.article.service.TagService;
 import com.xiongsu.service.comment.service.CommentReadService;
+import com.xiongsu.service.notify.service.RabbitmqService;
 import com.xiongsu.service.sidebar.service.SidebarService;
+import com.xiongsu.service.user.repository.entity.UserFootDO;
 import com.xiongsu.service.user.service.UserFootService;
 import com.xiongsu.service.user.service.UserService;
 import com.xiongsu.web.controller.article.vo.ArticleDetailVo;
+import com.xiongsu.web.controller.home.helper.IndexRecommendHelper;
 import com.xiongsu.web.global.vo.ResultVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +49,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 返回json格式数据
@@ -73,7 +91,7 @@ public class ArticleRestController {
     private ColumnService columnService;
 
     @Resource
-    IndexRecommesndHelper indexRecommendHelper;
+    IndexRecommendHelper indexRecommendHelper;
 
     /**
      * 文章详情页
@@ -160,6 +178,82 @@ public class ArticleRestController {
     /**
      * 获取指定分类下的文章信息
      */
-    @GetMapping("/article")
+    @GetMapping("/article/category")
+    public ResultVo<CategoryArticlesResponseDTO> getArticlesByCategory(@RequestParam(name = "category", required = false) String category,
+                                                                       @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+
+        // 搜索对应的文章
+        IPage<ArticleDTO> articles = articleService.queryArticlesByCategoryPagination(currentPage, pageSize, category);
+
+        List<CategoryDTO> categories = categoryService.loadAllCategories();
+        // 查询所有分类的对应的文章数
+        Map<Long, Long> articleCnt = articleService.queryArticleCountsByCategory();
+        // 过滤掉文章数为0的分类
+        categories.removeIf(c -> articleCnt.getOrDefault(c.getCategoryId(), 0L) <= 0L);
+
+        CategoryDTO selectedCategory = categories.stream().filter(c -> c.getCategory().equals(category)).findFirst().orElse(null);
+        selectedCategory = selectedCategory == null ? CategoryDTO.DEFAULT_CATEGORY : selectedCategory;
+        List<ArticleDTO> topArticles = indexRecommendHelper.topArticleList(selectedCategory);
+
+        CategoryArticlesResponseDTO responseDTO = new CategoryArticlesResponseDTO(articles, categories, topArticles);
+        return ResultVo.ok(responseDTO);
+    }
+
+    /**
+     * 获取指定分类下的文章信息
+     */
+    @GetMapping("/articles/tag")
+    public ResultVo<IPage<ArticleDTO>> getArticlesByTag(@RequestParam(name = "tagId", required = false) Long tagId,
+                                                        @RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        IPage<ArticleDTO> articles = articleService.queryArticlesByTagPagination(currentPage, pageSize, tagId);
+        return ResultVo.ok(articles);
+    }
+
+
+    /**
+     * 收藏，点赞等相关操作
+     * @param articleId
+     * @param type
+     * @return
+     */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "favor")
+    @MdcDot(bizCode = "#articleId")
+    public ResVo<Boolean> favor(@RequestParam(name = "articleId") Long articleId,
+                                @RequestParam(name = "type") Integer type ) {
+        if(log.isDebugEnabled()) {
+            log.debug("开始点赞: {}", type);
+        }
+        OperateTypeEnum operate = OperateTypeEnum.fromCode(type);
+        if (operate == OperateTypeEnum.EMPTY) {
+            return ResVo.fail(StatusEnum.ILLEGAL_ARGUMENTS_MIXED, type + "非法");
+        }
+
+        //要求文章必须存在
+        ArticleDO article = articleReadService.queryBasicArticle(articleId);
+        if (article == null) {
+            return ResVo.fail(StatusEnum.ILLEGAL_ARGUMENTS_MIXED, "文章不存在!");
+        }
+
+        UserFootDO foot = userFootService.saveOrUpdateUserFoot(DocumentTypeEnum.ARTICLE, articleId, article.getUserId(),
+                ReqInfoContext.getReqInfo().getUserId(),
+                operate);
+        //点赞，收藏消息
+        NotifyTypeEnum notifyType = OperateTypeEnum.getNotifyType(operate);
+
+        //点赞消息走 Rabbitmq，其他走Java内置消息机制
+        if ((notifyType.equals(NotifyTypeEnum.PRAISE) || notifyType.equals(NotifyTypeEnum.CANCEL_PRAISE)) && rabbitmqService.enabled()) {
+            rabbitmqService.publishDirectMsg(new MessageQueueEvent<>(notifyType, foot), CommonConstants.MESSAGE_QUEUE_KEY_NOTIFY);
+        } else {
+            Optional.ofNullable(notifyType).ifPresent(notify -> SpringUtil.publishEvent(new NotifyMsgEvent<>(this, notify, foot)));
+        }
+
+        if (log.isDebugEnabled()) {
+            log.info("点赞结束: {}", type);
+        }
+        return ResVo.ok(true);
+    }
 
 }

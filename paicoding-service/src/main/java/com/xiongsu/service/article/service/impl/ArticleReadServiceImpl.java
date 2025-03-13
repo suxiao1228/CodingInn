@@ -8,6 +8,7 @@ import com.xiongsu.api.vo.PageListVo;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.api.vo.PageVo;
 import com.xiongsu.api.vo.article.dto.ArticleDTO;
+import com.xiongsu.api.vo.article.dto.CategoryDTO;
 import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 文章查询相关服务类
@@ -142,12 +144,53 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public IPage<ArticleDTO> queryArticlesByCategoryPagination(int currentPage, int pageSize, String category) {
-        return null;
+        CategoryDTO categoryDto = categories(category);
+        IPage<ArticleDO> records = articleDao.listArticlesByCategoryIdPagination(currentPage, pageSize, categoryDto.getCategoryId());
+//        return buildArticleListVo(records, page.getPageSize());
+        return records.convert(this::fillArticleRelatedInfo);
     }
 
+    /**
+     * 返回分类列表
+     * @param active
+     * @return
+     */
+    private CategoryDTO categories(String active) {
+        List<CategoryDTO> allList = categoryService.loadAllCategories();
+        //查询所有分类的对应的文章数
+        Map<Long, Long> articleCnt = articleService.queryArticleCountsByCategory();
+        // 过滤掉文章数为0的分类
+        allList.removeIf(c -> articleCnt.getOrDefault(c.getCategoryId(), 0L) <= 0L);
+
+        // 刷新选中的分类
+        AtomicReference<CategoryDTO> selectedArticle = new AtomicReference<>();
+        allList.forEach(category -> {
+            if (category.getCategory().equalsIgnoreCase(active)) {
+                selectedArticle.set(category);
+            }
+        });
+
+        // 添加默认的全部分类
+        allList.add(0, new CategoryDTO(0L, CategoryDTO.DEFAULT_TOTAL_CATEGORY));
+        if (selectedArticle.get() == null) {
+            selectedArticle.set(allList.get(0));
+        }
+
+        return selectedArticle.get();
+    }
+
+    /**
+     * 分类根据tag查询
+     * @param currentPage
+     * @param pageSize
+     * @param tagId
+     * @return
+     */
     @Override
     public IPage<ArticleDTO> queryArticlesByTagPagination(int currentPage, int pageSize, Long tagId) {
-        return null;
+        IPage<ArticleDO> records = articleDao.listArticlesByTagIdPagination(currentPage, pageSize, tagId);
+
+        return records.convert(this::fillArticleRelatedInfo);
     }
 
     @Override
