@@ -28,10 +28,7 @@ import com.xiongsu.core.permission.UserRole;
 import com.xiongsu.core.util.SpringUtil;
 import com.xiongsu.service.article.repository.entity.ArticleDO;
 import com.xiongsu.service.article.repository.entity.ColumnArticleDO;
-import com.xiongsu.service.article.service.ArticleReadService;
-import com.xiongsu.service.article.service.CategoryService;
-import com.xiongsu.service.article.service.ColumnService;
-import com.xiongsu.service.article.service.TagService;
+import com.xiongsu.service.article.service.*;
 import com.xiongsu.service.comment.service.CommentReadService;
 import com.xiongsu.service.notify.service.RabbitmqService;
 import com.xiongsu.service.sidebar.service.SidebarService;
@@ -273,5 +270,6 @@ public class ArticleRestController {
 //        response.sendRedirect("/article/detail/" + id);
         // 这里采用前端重定向策略
         return ResVo.ok(id);
+        //记得往postman里面加一下
     }
 }

@@ -32,6 +32,9 @@ public class AsyncExecuteAspect implements ApplicationContextAware {
      * @param joinPoint
      * @throws BeansException
      */
+    //超时控制：通过AsyncUtil.callWithTimeLimit实现方法执行的超时中断
+    //异常处理：捕获ExecutionException, InterruptedException, TimeoutException三种超时相关异常
+    //降级响应：通过SpEL表达式动态生成超时后的响应值
     @Around("@annotation(asyncExecute)")
     public Object handle(ProceedingJoinPoint joinPoint, AsyncExecute asyncExecute) throws Throwable {
         if (!asyncExecute.value()) {
@@ -58,6 +61,9 @@ public class AsyncExecuteAspect implements ApplicationContextAware {
         }
     }
 
+    //创建StandardEvaluationContext上下文
+    //将方法参数注入上下文（参数名→参数值）
+    //解析timeOutRsp中的SpEL表达式，生成响应对象
     private Object defaultRespWhenTimeOut(ProceedingJoinPoint joinPoint, AsyncExecute asyncExecute) {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setBeanResolver(new BeanFactoryResolver(this.applicationContext));
