@@ -36,6 +36,7 @@ import com.xiongsu.service.user.repository.entity.UserFootDO;
 import com.xiongsu.service.user.service.UserFootService;
 import com.xiongsu.service.user.service.UserService;
 import com.xiongsu.web.controller.article.vo.ArticleDetailVo;
+import com.xiongsu.web.controller.article.vo.ArticleEditVo;
 import com.xiongsu.web.controller.home.helper.IndexRecommendHelper;
 import com.xiongsu.web.global.vo.ResultVo;
 import jakarta.annotation.Resource;
@@ -45,10 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 返回json格式数据
@@ -271,5 +269,45 @@ public class ArticleRestController {
         // 这里采用前端重定向策略
         return ResVo.ok(id);
         //记得往postman里面加一下
+    }
+
+    /**
+     * 更新文章
+     * @param articleId
+     * @return
+     */
+    @Permission(role = UserRole.LOGIN)
+    @GetMapping(path = "update/{articleId}")
+    public ResultVo<ArticleEditVo> update(@PathVariable(name = "articleId") Long articleId) {
+        ArticleEditVo vo = new ArticleEditVo();
+        if (articleId != null) {
+            ArticleDTO article = articleService.queryDetailArticleInfo(articleId);
+            vo.setArticle(article);
+            if (!Objects.equals(article.getAuthor(), ReqInfoContext.getReqInfo().getUserId())) {
+                // 没有权限
+                return ResultVo.fail(StatusEnum.NO_PERMISSION, "没有权限");
+            }
+            List<CategoryDTO> categoryList = categoryService.loadAllCategories();
+            vo.setCategories(categoryList);
+            vo.setTags(article.getTags());
+        } else {
+            List<CategoryDTO> categoryList = categoryService.loadAllCategories();
+            vo.setCategories(categoryList);
+            vo.setTags(Collections.emptyList());
+        }
+        return ResultVo.ok(vo);
+    }
+
+    /**
+     * 文章删除
+     * @param articleId
+     * @return
+     */
+    @Permission(role = UserRole.LOGIN)
+    @RequestMapping(path = "delete")
+    @MdcDot(bizCode = "#articleId")
+    public ResVo<Boolean> delete(@RequestParam(value = "articleId") Long articleId) {
+        articleWriteService.deleteArticle(articleId, ReqInfoContext.getReqInfo().getUserId());
+        return ResVo.ok(true);
     }
 }

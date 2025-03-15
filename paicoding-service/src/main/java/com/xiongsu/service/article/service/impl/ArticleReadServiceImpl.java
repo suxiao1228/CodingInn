@@ -4,6 +4,7 @@ package com.xiongsu.service.article.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiongsu.api.enums.*;
+import com.xiongsu.api.exception.ExceptionUtil;
 import com.xiongsu.api.vo.PageListVo;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.api.vo.PageVo;
@@ -11,6 +12,7 @@ import com.xiongsu.api.vo.article.dto.ArticleDTO;
 import com.xiongsu.api.vo.article.dto.CategoryDTO;
 import com.xiongsu.api.vo.article.dto.SimpleArticleDTO;
 import com.xiongsu.api.vo.article.dto.TagDTO;
+import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
 import com.xiongsu.core.util.ArticleUtil;
 import com.xiongsu.service.article.cache.ArticleCacheManager;
@@ -90,7 +92,17 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public ArticleDTO queryDetailArticleInfo(Long articleId) {
-        return null;
+        ArticleDTO article = articleDao.queryArticleDetail(articleId);
+        if (article == null) {
+            throw ExceptionUtil.of(StatusEnum.ARTICLE_NOT_EXISTS, articleId);
+        }
+        // 更新分类相关信息
+//        CategoryDTO category = article.getCategory();
+//        category.setCategory(categoryService.queryCategoryName(category.getCategoryId()));
+
+        // 更新标签信息
+        article.setTags(articleTagDao.queryArticleTagDetails(articleId));
+        return article;
     }
 
     /**
