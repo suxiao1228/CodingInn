@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 文章查询相关服务类
@@ -207,7 +208,9 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
     @Override
     public List<ArticleDTO> queryTopArticlesByCategory(Long categoryId) {
-        return List.of();
+        PageParam page = PageParam.newPageInstance(PageParam.DEFAULT_PAGE_NUM, PageParam.TOP_PAGE_SIZE);
+        List<ArticleDO> articleDTOS = articleDao.listArticlesByCategoryId(categoryId, page);
+        return articleDTOS.stream().map(this::fillArticleRelatedInfo).collect(Collectors.toList());
     }
 
     @Override

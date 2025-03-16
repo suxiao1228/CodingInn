@@ -69,8 +69,8 @@ public class ArticleRestController {
     @Resource
     private ArticleWriteService articleWriteService;
 
-    @Resource
-    private ArticleRecommendService articleRecommendService;
+//    @Resource
+//    private ArticleRecommendService articleRecommendService;
 
     @Resource
     private RabbitmqService rabbitmqService;
