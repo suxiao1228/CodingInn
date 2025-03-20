@@ -11,8 +11,8 @@
     <select id="listArticlesOrderById" resultType="com.xiongsu.api.vo.article.dto.SimpleArticleDTO">
         select id, title, update_time as createTime from article
         where id > #{lastId}
-        and status =${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-        and deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+        and status =${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+        and deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code}
         order by id asc limit #{size}
     </select>
 
@@ -20,9 +20,9 @@
             resultType="com.xiongsu.api.vo.article.dto.SimpleArticleDTO">
         select rc.document_id as id, a.title as title, a.create_time as createTime
         from read_count as rc left join article as a on rc.document_id = a.id
-        where rc.document_type = ${@com.github.paicoding.forum.api.model.enums.DocumentTypeEnum@ARTICLE.code}
-        and a.status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-        and a.deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code} order by rc.cnt desc
+        where rc.document_type = ${@com.xiongsu.api.enums.DocumentTypeEnum@ARTICLE.code}
+        and a.status = ${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+        and a.deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code} order by rc.cnt desc
         <include refid="limit"/>
     </select>
 
@@ -31,9 +31,9 @@
         select DISTINCT(a.id) as documentId, rc.cnt as cnt from article a
         left join article_tag as t on a.id = t.article_id
         left join read_count rc on rc.document_id  = a.id
-        where rc.document_type = ${@com.github.paicoding.forum.api.model.enums.DocumentTypeEnum@ARTICLE.code}
-        and a.status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-        and a.deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+        where rc.document_type = ${@com.xiongsu.api.enums.DocumentTypeEnum@ARTICLE.code}
+        and a.status = ${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+        and a.deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code}
         <if test="categoryId != null">
             and a.category_id = #{categoryId}
         </if>
@@ -51,9 +51,9 @@
             resultType="com.xiongsu.api.vo.article.dto.SimpleArticleDTO">
         select rc.document_id as id, a.title as title, a.create_time as createTime
         from read_count as rc left join article as a on rc.document_id = a.id
-        where rc.document_type = ${@com.github.paicoding.forum.api.model.enums.DocumentTypeEnum@ARTICLE.code}
-        and a.status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-        and a.deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code} and a.user_id = #{userId} order
+        where rc.document_type = ${@com.xiongsu.api.enums.DocumentTypeEnum@ARTICLE.code}
+        and a.status = ${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+        and a.deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code} and a.user_id = #{userId} order
         by rc.cnt desc
         <include refid="limit"/>
     </select>
@@ -63,13 +63,13 @@
         select DATE_FORMAT(create_time, "%Y") as year, count(*) as articleCount
         from article
         where user_id = #{userId}
-          and status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-          and deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+          and status = ${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+          and deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code}
         group by year
     </select>
 
     <sql id="articlesByParams">
-        where a.deleted = ${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+        where a.deleted = ${@com.xiongsu.api.enums.YesOrNoEnum@NO.code}
         <if test="searchParams.title != null and searchParams.title != ''">
             and a.title like concat('%', #{searchParams.title}, '%')
         </if>
@@ -132,8 +132,8 @@
         select article.* from article
         left join article_tag t on article.id = t.article_id
         where t.tag_id = #{tagId}
-          and article.status = ${@com.github.paicoding.forum.api.model.enums.PushStatusEnum@ONLINE.code}
-          and article.deleted =${@com.github.paicoding.forum.api.model.enums.YesOrNoEnum@NO.code}
+          and article.status = ${@com.xiongsu.api.enums.PushStatusEnum@ONLINE.code}
+          and article.deleted =${@com.xiongsu.api.enums.YesOrNoEnum@NO.code}
         order by article.offical_stat desc, article.topping_stat desc, article.create_time desc
     </select>
 

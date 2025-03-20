@@ -1,4 +1,4 @@
-package com.xiongsu.service.article.service;
+package com.xiongsu.service.article.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.xiongsu.api.vo.PageVo;
@@ -10,6 +10,7 @@ import com.xiongsu.service.article.repository.dao.ArticleDao;
 import com.xiongsu.service.article.repository.dao.ColumnArticleDao;
 import com.xiongsu.service.article.repository.dao.ColumnDao;
 import com.xiongsu.service.article.repository.entity.ColumnArticleDO;
+import com.xiongsu.service.article.service.ColumnSettingService;
 import com.xiongsu.service.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ColumnSettingServiceImpl implements ColumnSettingService{
+public class ColumnSettingServiceImpl implements ColumnSettingService {
 
     @Autowired
     private UserService userService;
