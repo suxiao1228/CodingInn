@@ -1,7 +1,9 @@
 package com.xiongsu.service.user.service.user;
 
 import com.xiongsu.api.context.ReqInfoContext;
+import com.xiongsu.api.exception.ExceptionUtil;
 import com.xiongsu.api.vo.article.dto.YearArticleDTO;
+import com.xiongsu.api.vo.constants.StatusEnum;
 import com.xiongsu.api.vo.user.UserInfoSaveReq;
 import com.xiongsu.api.vo.user.UserPwdLoginReq;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
@@ -20,9 +22,12 @@ import com.xiongsu.service.user.service.UserService;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
 
@@ -78,7 +83,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<BaseUserInfoDTO> batchQueryBasicUserInfo(Collection<Long> userIds) {
-        return List.of();
+        List<UserInfoDO> users = userDao.getByUserIds(userIds);
+        if (CollectionUtils.isEmpty(users)) {
+            throw ExceptionUtil.of(StatusEnum.USER_EXISTS, "userId=" + userIds);
+        }
+        return users.stream().map(UserConverter::toDTO).collect(Collectors.toList());
     }
 
     @Override
