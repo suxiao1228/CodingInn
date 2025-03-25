@@ -630,6 +630,6 @@ private final DistributedLockUtil lockUtil = new DistributedLockUtil(redissonCli
 
     @Override
     public Long getArticleCount() {
-        return 0L;
+        return articleDao.countArticle();
     }
 }
