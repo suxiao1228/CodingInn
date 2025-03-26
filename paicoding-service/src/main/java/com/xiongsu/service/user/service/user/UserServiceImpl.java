@@ -52,7 +52,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SimpleUserInfoDTO> searchUser(String userName) {
-        return List.of();
+        List<UserInfoDO> users = userDao.getByUserNameLike(userName);
+        if (CollectionUtils.isEmpty(users)) {
+            return Collections.emptyList();
+        }
+        return users.stream().map(s -> new SimpleUserInfoDTO()
+                .setUserId(s.getUserId())
+                .setName(s.getUserName())
+                .setAvatar(s.getPhoto())
+                .setProfile(s.getProfile())
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
