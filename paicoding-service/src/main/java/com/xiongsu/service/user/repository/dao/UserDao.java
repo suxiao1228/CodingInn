@@ -8,6 +8,7 @@ import com.xiongsu.api.enums.YesOrNoEnum;
 import com.xiongsu.api.vo.PageParam;
 import com.xiongsu.service.user.repository.entity.UserDO;
 import com.xiongsu.service.user.repository.entity.UserInfoDO;
+import com.xiongsu.service.user.repository.mapper.UserInfoMapper;
 import com.xiongsu.service.user.repository.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ import static com.baomidou.mybatisplus.extension.toolkit.Db.updateById;
 
 
 @Repository
-public class UserDao {
+public class UserDao extends ServiceImpl<UserInfoMapper, UserInfoDO>{
 
     @Resource
     private UserMapper userMapper;
