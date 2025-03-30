@@ -8,6 +8,7 @@ import com.xiongsu.api.vo.seo.Seo;
 import com.xiongsu.api.vo.user.dto.BaseUserInfoDTO;
 import com.xiongsu.core.util.NumUtil;
 import com.xiongsu.core.util.SessionUtil;
+import com.xiongsu.service.sitemap.service.SitemapService;
 import com.xiongsu.service.statistics.service.statistic.UserStatisticService;
 import com.xiongsu.service.user.service.LoginService;
 import com.xiongsu.service.user.service.UserService;

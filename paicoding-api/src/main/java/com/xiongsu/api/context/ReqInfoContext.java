@@ -8,7 +8,7 @@ import lombok.Data;
 import java.security.Principal;
 
 /**
- * 请求上下文，携带用户身份相关信息
+ * 请求上下文，携带用户身份相关信息，cookie, session
  *
  * @author XuYifei
  * @date 2024-07-12
