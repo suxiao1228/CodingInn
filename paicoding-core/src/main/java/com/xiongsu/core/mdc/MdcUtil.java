@@ -24,7 +24,7 @@ public class MdcUtil {
         MDC.put(TRACE_ID_KEY, SelfTraceIdGenerator.generate());
     }
 
-    public static String genTraceId() {
+    public static String getTraceId() {
         return MDC.get(TRACE_ID_KEY);
     }
 

@@ -12,6 +12,13 @@ public interface StatisticsSettingService {
 
 
     /**
+     * 保存计数
+     *
+     * @param host
+     */
+    void saveRequestCount(String host);
+
+    /**
      * 获取总数
      *
      * @return

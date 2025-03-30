@@ -5,7 +5,11 @@ import com.github.hui.quick.plugin.qrcode.util.json.JsonUtil;
 import com.xiongsu.api.context.ReqInfoContext;
 import com.xiongsu.api.vo.ResVo;
 import com.xiongsu.api.vo.constants.StatusEnum;
+import com.xiongsu.core.permission.Permission;
+import com.xiongsu.core.permission.UserRole;
 import com.xiongsu.core.util.SpringUtil;
+import com.xiongsu.service.rank.service.UserActivityRankService;
+import com.xiongsu.service.rank.service.model.ActivityScoreBo;
 import com.xiongsu.web.global.GlobalInitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import java.security.Permission;
+
 
 
 /**

@@ -29,6 +29,7 @@ public class UserStatisticsInterceptor {
 
     private static final String SESSION_COOKIE_NAME = "SESSION_ID";
 
+    //两种不同的在线用户统计方式
     @Bean
     public AsyncHandlerInterceptor onlineUserStatisticInterceptor(UserStatisticServiceProperties userStatisticServiceProperties) {
         if(UserStatisticServiceProperties.UserStatisticServiceType.CAFFEINE.equals(userStatisticServiceProperties.getType())) {
